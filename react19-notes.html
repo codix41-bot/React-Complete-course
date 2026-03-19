@@ -1,0 +1,2119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React 19 — Complete Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090f;
+  --surface:#0e1117;
+  --s2:#141820;
+  --s3:#1c2230;
+  --border:#1f2a3d;
+  --react:#61dafb;
+  --react-dim:rgba(97,218,251,0.12);
+  --react-glow:rgba(97,218,251,0.25);
+  --gold:#f5c842;
+  --green:#4ade80;
+  --orange:#fb923c;
+  --red:#f87171;
+  --purple:#c084fc;
+  --text:#e8eaf0;
+  --muted:#6b7a99;
+  --muted2:#8a9ab8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;line-height:1.75}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  position:fixed;top:0;left:0;width:240px;height:100vh;
+  background:var(--surface);border-right:1px solid var(--border);
+  overflow-y:auto;z-index:100;padding:1.5rem 0;
+  display:flex;flex-direction:column;
+}
+.sidebar-logo{
+  padding:0 1.2rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:1rem;
+}
+.sidebar-logo .logo-text{
+  font-family:'Outfit',sans-serif;font-weight:800;font-size:1.1rem;
+  color:var(--react);letter-spacing:-0.02em;
+}
+.sidebar-logo .logo-sub{font-size:11px;color:var(--muted);margin-top:2px;font-family:'Fira Code',monospace}
+.sidebar-section-title{
+  font-size:10px;font-weight:600;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--muted);
+  padding:0.8rem 1.2rem 0.3rem;
+}
+.sidebar a{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 1.2rem;font-size:13px;color:var(--muted2);
+  text-decoration:none;transition:all 0.15s;border-left:2px solid transparent;
+}
+.sidebar a:hover{color:var(--text);background:var(--s2);border-left-color:var(--react)}
+.sidebar a .ch-num{
+  font-family:'Fira Code',monospace;font-size:10px;
+  color:var(--react);min-width:22px;
+}
+.sidebar a.new-tag::after{
+  content:'NEW';font-size:9px;
+  background:rgba(97,218,251,0.15);color:var(--react);
+  padding:1px 5px;border-radius:3px;margin-left:auto;
+  font-family:'Fira Code',monospace;letter-spacing:0.05em;
+}
+
+/* ── MAIN ── */
+.main{margin-left:240px;min-height:100vh}
+
+/* ── HERO ── */
+.hero{
+  position:relative;padding:5rem 4rem 4rem;
+  border-bottom:1px solid var(--border);overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 90% 80% at 20% -30%,rgba(97,218,251,0.08) 0%,transparent 60%);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  font-family:'Fira Code',monospace;font-size:12px;letter-spacing:0.15em;
+  color:var(--react);text-transform:uppercase;margin-bottom:1.2rem;
+  display:flex;align-items:center;gap:8px;
+}
+.hero-eyebrow::before{content:'';display:inline-block;width:24px;height:1px;background:var(--react)}
+.hero h1{
+  font-family:'Outfit',sans-serif;font-weight:800;
+  font-size:clamp(3rem,6vw,5rem);line-height:1.05;
+  letter-spacing:-0.03em;color:var(--text);margin-bottom:1rem;
+}
+.hero h1 .react-word{color:var(--react)}
+.hero-sub{font-size:1.15rem;color:var(--muted2);max-width:560px;margin-bottom:2rem}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap}
+.badge{
+  font-family:'Fira Code',monospace;font-size:11px;
+  padding:4px 12px;border-radius:99px;border:1px solid;letter-spacing:0.05em;
+}
+.b-react{border-color:var(--react);color:var(--react);background:var(--react-dim)}
+.b-gold{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,0.08)}
+.b-green{border-color:var(--green);color:var(--green);background:rgba(74,222,128,0.08)}
+.b-purple{border-color:var(--purple);color:var(--purple);background:rgba(192,132,252,0.08)}
+
+/* ── CONTENT AREA ── */
+.content{padding:0 4rem 6rem;max-width:900px}
+
+/* ── CHAPTER ── */
+.chapter{
+  margin-top:4rem;padding-top:2.5rem;
+  border-top:1px solid var(--border);
+}
+.chapter-num{
+  font-family:'Fira Code',monospace;font-size:11px;
+  letter-spacing:0.2em;color:var(--react);
+  text-transform:uppercase;display:block;margin-bottom:0.5rem;
+}
+.chapter h2{
+  font-family:'Outfit',sans-serif;font-size:2rem;
+  font-weight:800;letter-spacing:-0.02em;color:var(--text);
+  margin-bottom:0.8rem;
+}
+.chapter>p{color:var(--muted2);font-size:1.05rem;margin-bottom:1.5rem;max-width:680px}
+
+/* ── SECTION ── */
+.section{margin-top:2.5rem}
+.section h3{
+  font-family:'Outfit',sans-serif;font-size:1.15rem;
+  font-weight:700;color:var(--text);margin-bottom:0.8rem;
+  display:flex;align-items:center;gap:10px;
+}
+.section h3 .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--react);flex-shrink:0;
+}
+.section>p,.section>ul{color:var(--muted2);margin-bottom:0.8rem}
+.section ul{padding-left:1.4rem}
+.section li{margin-bottom:4px}
+
+/* ── DEF BOX ── */
+.def{
+  background:var(--s2);border-left:3px solid var(--gold);
+  border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0;
+}
+.def-label{
+  font-family:'Fira Code',monospace;font-size:10px;
+  letter-spacing:0.2em;color:var(--gold);
+  text-transform:uppercase;margin-bottom:0.4rem;
+}
+.def p{color:var(--text);margin:0;font-size:0.95rem}
+.def code{color:var(--react)}
+
+/* ── TIP / WARN / JOB BOX ── */
+.tip{
+  background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);
+  border-radius:8px;padding:0.9rem 1.2rem;margin:1rem 0;
+  font-size:0.92rem;color:#a0e8b8;
+}
+.tip strong{color:var(--green);font-family:'Fira Code',monospace;font-size:11px;letter-spacing:0.1em}
+.warn{
+  background:rgba(251,146,60,0.06);border:1px solid rgba(251,146,60,0.2);
+  border-radius:8px;padding:0.9rem 1.2rem;margin:1rem 0;
+  font-size:0.92rem;color:#f0c0a0;
+}
+.warn strong{color:var(--orange);font-family:'Fira Code',monospace;font-size:11px;letter-spacing:0.1em}
+.job-box{
+  background:rgba(192,132,252,0.06);border:1px solid rgba(192,132,252,0.2);
+  border-radius:8px;padding:1rem 1.2rem;margin:1rem 0;
+}
+.job-box .job-label{
+  font-family:'Fira Code',monospace;font-size:10px;letter-spacing:0.15em;
+  color:var(--purple);text-transform:uppercase;margin-bottom:0.5rem;
+}
+.job-box p{color:#d0b0f0;font-size:0.92rem;margin:0}
+
+/* ── CODE BLOCK ── */
+.code-block{
+  background:#060810;border:1px solid var(--border);
+  border-radius:10px;margin:1.2rem 0;overflow:hidden;
+}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 14px;background:var(--s2);border-bottom:1px solid var(--border);
+}
+.code-lang{font-family:'Fira Code',monospace;font-size:11px;color:var(--react);letter-spacing:0.1em}
+.code-dots{display:flex;gap:5px}
+.dot-r{width:10px;height:10px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg{background:#28c840}
+pre{
+  padding:1.4rem 1.6rem;overflow-x:auto;
+  font-family:'Fira Code',monospace;font-size:13px;
+  line-height:1.9;color:#9bb0cc;
+}
+/* syntax colors */
+.kw{color:#c084fc}   /* keywords: import, const, return, function */
+.fn{color:#61dafb}   /* function names / component names */
+.str{color:#4ade80}  /* strings */
+.cmt{color:#3d4f6b;font-style:italic}  /* comments */
+.tag{color:#fb923c}  /* JSX tags */
+.attr{color:#f5c842} /* JSX attributes */
+.val{color:#4ade80}  /* attribute values */
+.hook{color:#f87171} /* hooks */
+.num{color:#fb923c}  /* numbers */
+.txt{color:#9bb0cc}  /* plain text */
+.op{color:#61dafb}   /* operators / punctuation accent */
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;margin:1.2rem 0;font-size:0.9rem}
+th{
+  font-family:'Fira Code',monospace;font-size:11px;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);
+  padding:8px 12px;text-align:left;
+}
+td{padding:8px 12px;border-bottom:1px solid #12192a;color:var(--muted2);vertical-align:top}
+tr:hover td{background:var(--s2)}
+td code,th code{
+  font-family:'Fira Code',monospace;font-size:12px;
+  background:var(--s2);padding:1px 6px;border-radius:4px;color:var(--react);
+}
+
+/* ── CONCEPT CARDS ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin:1.2rem 0}
+.card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:10px;padding:1rem;transition:border-color 0.15s;
+}
+.card:hover{border-color:rgba(97,218,251,0.3)}
+.card .card-icon{font-size:1.3rem;margin-bottom:8px}
+.card h4{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.card p{font-size:12px;color:var(--muted)}
+
+/* ── PROJECT CARD ── */
+.project{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:12px;margin:1.5rem 0;overflow:hidden;
+}
+.project-header{
+  background:var(--s3);padding:1.2rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+}
+.project-num{
+  width:36px;height:36px;border-radius:8px;
+  background:var(--react-dim);border:1px solid rgba(97,218,251,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fira Code',monospace;font-size:13px;color:var(--react);font-weight:600;
+}
+.project-title{font-size:1rem;font-weight:700;color:var(--text)}
+.project-level{
+  margin-left:auto;font-family:'Fira Code',monospace;font-size:10px;
+  padding:3px 10px;border-radius:99px;letter-spacing:0.08em;
+}
+.level-beginner{background:rgba(74,222,128,0.1);color:var(--green);border:1px solid rgba(74,222,128,0.25)}
+.level-mid{background:rgba(245,200,66,0.1);color:var(--gold);border:1px solid rgba(245,200,66,0.25)}
+.level-advanced{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.25)}
+.project-body{padding:1.2rem 1.5rem}
+.project-desc{color:var(--muted2);font-size:0.95rem;margin-bottom:1rem}
+.skills-used{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0.8rem}
+.skill-tag{
+  font-family:'Fira Code',monospace;font-size:11px;
+  background:var(--border);color:var(--muted2);
+  padding:3px 10px;border-radius:99px;
+}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border) 30%,var(--border) 70%,transparent);margin:3rem 0}
+
+/* ── HIGHLIGHT INLINE ── */
+code{
+  font-family:'Fira Code',monospace;font-size:13px;
+  background:var(--s2);padding:1px 6px;border-radius:4px;
+  color:var(--react);border:1px solid var(--border);
+}
+
+/* ── REACT19 NEW BADGE ── */
+.new19{
+  display:inline-block;font-family:'Fira Code',monospace;font-size:9px;
+  background:rgba(97,218,251,0.15);color:var(--react);
+  padding:1px 7px;border-radius:3px;letter-spacing:0.08em;
+  margin-left:8px;vertical-align:middle;border:1px solid rgba(97,218,251,0.3);
+}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--border);padding:2rem 4rem;
+  font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);
+}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .hero{padding:3rem 1.5rem 2.5rem}
+  .content{padding:0 1.5rem 4rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">⚛ React 19</div>
+    <div class="logo-sub">// complete notes</div>
+  </div>
+
+  <div class="sidebar-section-title">Basics</div>
+  <a href="#ch1"><span class="ch-num">01</span>What is React?</a>
+  <a href="#ch2"><span class="ch-num">02</span>Setup & Vite</a>
+  <a href="#ch3"><span class="ch-num">03</span>JSX</a>
+  <a href="#ch4"><span class="ch-num">04</span>Components</a>
+  <a href="#ch5"><span class="ch-num">05</span>Props</a>
+  <a href="#ch6"><span class="ch-num">06</span>useState</a>
+  <a href="#ch7"><span class="ch-num">07</span>useEffect</a>
+  <a href="#ch8"><span class="ch-num">08</span>Events & Forms</a>
+
+  <div class="sidebar-section-title">Intermediate</div>
+  <a href="#ch9"><span class="ch-num">09</span>Lists & Keys</a>
+  <a href="#ch10"><span class="ch-num">10</span>Conditional Render</a>
+  <a href="#ch11"><span class="ch-num">11</span>useContext</a>
+  <a href="#ch12"><span class="ch-num">12</span>useRef & useMemo</a>
+  <a href="#ch13"><span class="ch-num">13</span>Custom Hooks</a>
+  <a href="#ch14"><span class="ch-num">14</span>React Router v6</a>
+
+  <div class="sidebar-section-title">Advanced</div>
+  <a href="#ch15" class="new-tag"><span class="ch-num">15</span>React 19 Features</a>
+  <a href="#ch16" class="new-tag"><span class="ch-num">16</span>use() Hook</a>
+  <a href="#ch17" class="new-tag"><span class="ch-num">17</span>Server Components</a>
+  <a href="#ch18"><span class="ch-num">18</span>Error Boundaries</a>
+  <a href="#ch19"><span class="ch-num">19</span>Performance</a>
+
+  <div class="sidebar-section-title">Projects</div>
+  <a href="#proj"><span class="ch-num">🏗</span>Job Projects</a>
+  <a href="#interview"><span class="ch-num">💼</span>Interview Prep</a>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-eyebrow">Complete Study Notes 2025</div>
+  <h1>Master <span class="react-word">React 19</span><br>From Zero to Job-Ready</h1>
+  <p class="hero-sub">Basics → Advanced → Real Projects — everything a fresher needs to crack a React developer job.</p>
+  <div class="badge-row">
+    <span class="badge b-react">React 19</span>
+    <span class="badge b-gold">Job Oriented</span>
+    <span class="badge b-green">Real Projects</span>
+    <span class="badge b-purple">Interview Ready</span>
+  </div>
+</header>
+
+<div class="content">
+
+<!-- ══════════════════════════════════════
+     CHAPTER 1 — WHAT IS REACT
+══════════════════════════════════════ -->
+<div class="chapter" id="ch1">
+  <span class="chapter-num">Chapter 01 — Basics</span>
+  <h2>What is React?</h2>
+  <p>React ek JavaScript library hai jo Facebook/Meta ne banai. Iska kaam hai fast, interactive user interfaces banana.</p>
+
+  <div class="def">
+    <div class="def-label">Definition</div>
+    <p><strong>React</strong> ek open-source JavaScript library hai jo <strong>component-based UI</strong> banane ke liye use hoti hai. Yeh ek virtual DOM use karti hai jo real DOM se zyada fast hota hai. React sirf UI ko handle karta hai (View layer) — baaki sab (routing, state management) ke liye alag libraries use hoti hain.</p>
+  </div>
+
+  <div class="section">
+    <h3><span class="dot"></span>React Kyun Seekhein?</h3>
+    <div class="card-grid">
+      <div class="card"><div class="card-icon">🚀</div><h4>Most Popular</h4><p>2024 Stack Overflow survey mein #1 frontend library</p></div>
+      <div class="card"><div class="card-icon">💼</div><h4>Job Demand</h4><p>India mein 70%+ frontend job posts React maangti hain</p></div>
+      <div class="card"><div class="card-icon">⚡</div><h4>Fast Performance</h4><p>Virtual DOM se UI updates bahut fast hoti hain</p></div>
+      <div class="card"><div class="card-icon">🔄</div><h4>Reusable Code</h4><p>Ek component banao, 100 jagah use karo</p></div>
+      <div class="card"><div class="card-icon">📱</div><h4>React Native</h4><p>Same knowledge se mobile apps bhi bana sakte ho</p></div>
+      <div class="card"><div class="card-icon">🌐</div><h4>Next.js Ready</h4><p>React seekhoge toh Next.js asaan ho jaega</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3><span class="dot"></span>Key Concepts Overview</h3>
+    <table>
+      <tr><th>Concept</th><th>Kya hai</th><th>Example</th></tr>
+      <tr><td><code>Component</code></td><td>Reusable UI piece</td><td>Button, Navbar, Card</td></tr>
+      <tr><td><code>JSX</code></td><td>JS mein HTML likhne ka tarika</td><td><code>&lt;h1&gt;Hello&lt;/h1&gt;</code></td></tr>
+      <tr><td><code>Props</code></td><td>Component ko data pass karna</td><td><code>&lt;Card title="React"/&gt;</code></td></tr>
+      <tr><td><code>State</code></td><td>Component ka internal data</td><td>count, isLoading, user</td></tr>
+      <tr><td><code>Hooks</code></td><td>Special functions for state/effects</td><td>useState, useEffect</td></tr>
+      <tr><td><code>Virtual DOM</code></td><td>React ka fast update mechanism</td><td>Sirf changed part update hota hai</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 2 — SETUP
+══════════════════════════════════════ -->
+<div class="chapter" id="ch2">
+  <span class="chapter-num">Chapter 02 — Basics</span>
+  <h2>Project Setup with Vite</h2>
+  <p>React 19 ke liye hum Vite use karte hain — yeh Create React App se 10x fast hai aur industry standard ban gaya hai.</p>
+
+  <div class="def">
+    <div class="def-label">Definition</div>
+    <p><strong>Vite</strong> ek modern build tool hai jo React project ko lightning-fast start karta hai. <code>npm create vite@latest</code> se new project banta hai.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">TERMINAL — Setup Commands</span></div>
+    <pre><span class="cmt"># Step 1: Create project (React + JS ya TypeScript choose karo)</span>
+npm create vite@latest my-app -- --template react
+
+<span class="cmt"># Step 2: Folder mein jaao</span>
+cd my-app
+
+<span class="cmt"># Step 3: Dependencies install karo</span>
+npm install
+
+<span class="cmt"># Step 4: Dev server start karo</span>
+npm run dev
+
+<span class="cmt"># Browser mein khulega: http://localhost:5173</span></pre>
+  </div>
+
+  <div class="section">
+    <h3><span class="dot"></span>Project Folder Structure</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">FOLDER STRUCTURE</span></div>
+      <pre>my-app/
+├── public/              <span class="cmt">← static files (images, favicon)</span>
+├── src/
+│   ├── components/      <span class="cmt">← aapke reusable components</span>
+│   ├── pages/           <span class="cmt">← page-level components</span>
+│   ├── hooks/           <span class="cmt">← custom hooks</span>
+│   ├── context/         <span class="cmt">← Context API files</span>
+│   ├── utils/           <span class="cmt">← helper functions</span>
+│   ├── App.jsx          <span class="cmt">← main app component</span>
+│   └── main.jsx         <span class="cmt">← entry point</span>
+├── index.html
+├── package.json
+└── vite.config.js</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — main.jsx (Entry Point)</span></div>
+      <pre><span class="kw">import</span> React <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">import</span> ReactDOM <span class="kw">from</span> <span class="str">'react-dom/client'</span>
+<span class="kw">import</span> App <span class="kw">from</span> <span class="str">'./App.jsx'</span>
+<span class="kw">import</span> <span class="str">'./index.css'</span>
+
+ReactDOM.<span class="fn">createRoot</span>(document.<span class="fn">getElementById</span>(<span class="str">'root'</span>)).<span class="fn">render</span>(
+  &lt;<span class="tag">React.StrictMode</span>&gt;
+    &lt;<span class="tag">App</span> /&gt;
+  &lt;/<span class="tag">React.StrictMode</span>&gt;
+)</pre>
+    </div>
+  </div>
+
+  <div class="job-box">
+    <div class="job-label">💼 Job Tip</div>
+    <p>Interviews mein poochha jaata hai: "CRA (Create React App) vs Vite mein kya fark hai?" — Vite ES modules use karta hai, startup instant hoti hai, CRA webpack use karta tha jo slow tha. 2024 mein CRA deprecated ho gaya.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 3 — JSX
+══════════════════════════════════════ -->
+<div class="chapter" id="ch3">
+  <span class="chapter-num">Chapter 03 — Basics</span>
+  <h2>JSX — JavaScript + HTML</h2>
+  <p>JSX ek syntax extension hai jo JavaScript mein HTML jaisi code likhne deta hai. React isko behind the scenes plain JS mein convert karta hai.</p>
+
+  <div class="def">
+    <div class="def-label">Definition</div>
+    <p><strong>JSX</strong> (JavaScript XML) React ke components ka look define karta hai. Yeh HTML nahi hai — yeh JavaScript hai jo HTML jaisa dikhta hai. Browser directly JSX nahi samajhta, Babel isko <code>React.createElement()</code> calls mein convert karta hai.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — Rules aur Examples</span></div>
+    <pre><span class="cmt">// ✅ JSX likhne ke rules:</span>
+
+<span class="cmt">// 1. Single root element hona chahiye</span>
+<span class="kw">return</span> (
+  &lt;<span class="tag">div</span>&gt;                    <span class="cmt">{/* ✅ ek root */}</span>
+    &lt;<span class="tag">h1</span>&gt;Hello&lt;/<span class="tag">h1</span>&gt;
+    &lt;<span class="tag">p</span>&gt;World&lt;/<span class="tag">p</span>&gt;
+  &lt;/<span class="tag">div</span>&gt;
+)
+
+<span class="cmt">// 2. Fragment se extra div avoid karo</span>
+<span class="kw">return</span> (
+  &lt;&gt;                       <span class="cmt">{/* ✅ Fragment = invisible wrapper */}</span>
+    &lt;<span class="tag">h1</span>&gt;Hello&lt;/<span class="tag">h1</span>&gt;
+    &lt;<span class="tag">p</span>&gt;World&lt;/<span class="tag">p</span>&gt;
+  &lt;/&gt;
+)
+
+<span class="cmt">// 3. className use karo (class nahi)</span>
+&lt;<span class="tag">div</span> <span class="attr">className</span>=<span class="val">"container"</span>&gt;...&lt;/<span class="tag">div</span>&gt;
+
+<span class="cmt">// 4. JavaScript {} curly braces se use karo</span>
+<span class="kw">const</span> name = <span class="str">"Rahul"</span>
+<span class="kw">const</span> age = <span class="num">22</span>
+<span class="kw">return</span> &lt;<span class="tag">h1</span>&gt;I am {name}, age {age + <span class="num">1</span>}&lt;/<span class="tag">h1</span>&gt;
+
+<span class="cmt">// 5. Self-closing tags zaroor close karo</span>
+&lt;<span class="tag">img</span> <span class="attr">src</span>=<span class="val">"photo.jpg"</span> <span class="attr">alt</span>=<span class="val">"pic"</span> /&gt;   <span class="cmt">// ✅</span>
+&lt;<span class="tag">br</span> /&gt;  &lt;<span class="tag">input</span> /&gt;  &lt;<span class="tag">hr</span> /&gt;
+
+<span class="cmt">// 6. Inline styles: object pass karo (double curly braces)</span>
+&lt;<span class="tag">p</span> <span class="attr">style</span>={{ <span class="attr">color</span>: <span class="str">'red'</span>, <span class="attr">fontSize</span>: <span class="str">'18px'</span> }}&gt;Styled!&lt;/<span class="tag">p</span>&gt;
+
+<span class="cmt">// 7. JSX mein expressions allowed, statements nahi</span>
+&lt;<span class="tag">p</span>&gt;{<span class="num">2</span> + <span class="num">2</span>}&lt;/<span class="tag">p</span>&gt;          <span class="cmt">// ✅ expression</span>
+&lt;<span class="tag">p</span>&gt;{isLoggedIn ? <span class="str">'Welcome'</span> : <span class="str">'Login'</span>}&lt;/<span class="tag">p</span>&gt;   <span class="cmt">// ✅ ternary</span></pre>
+  </div>
+
+  <div class="tip">
+    <strong>💡 REMEMBER</strong><br>
+    JSX mein HTML attributes camelCase mein hote hain: <code>onclick</code> → <code>onClick</code>, <code>class</code> → <code>className</code>, <code>for</code> → <code>htmlFor</code>, <code>tabindex</code> → <code>tabIndex</code>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 4 — COMPONENTS
+══════════════════════════════════════ -->
+<div class="chapter" id="ch4">
+  <span class="chapter-num">Chapter 04 — Basics</span>
+  <h2>Components</h2>
+  <p>React ka poora idea yahi hai — UI ko chhote-chhote reusable pieces (components) mein todna.</p>
+
+  <div class="def">
+    <div class="def-label">Definition</div>
+    <p><strong>Component</strong> ek JavaScript function hai jo JSX return karta hai. Component ka naam hamesha capital letter se shuru hota hai. Components ko compose karke complex UIs banti hain.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — Your First Component</span></div>
+    <pre><span class="cmt">// ✅ Functional Component (Modern React — always use this)</span>
+<span class="kw">function</span> <span class="fn">Greeting</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">h1</span>&gt;Namaste! 🙏&lt;/<span class="tag">h1</span>&gt;
+      &lt;<span class="tag">p</span>&gt;Welcome to React 19&lt;/<span class="tag">p</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}
+
+<span class="kw">export default</span> <span class="fn">Greeting</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — Composing Components (Real-World Pattern)</span></div>
+    <pre><span class="cmt">// Card component</span>
+<span class="kw">function</span> <span class="fn">Card</span>({ title, description, image }) {
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span> <span class="attr">className</span>=<span class="val">"card"</span>&gt;
+      &lt;<span class="tag">img</span> <span class="attr">src</span>={image} <span class="attr">alt</span>={title} /&gt;
+      &lt;<span class="tag">h3</span>&gt;{title}&lt;/<span class="tag">h3</span>&gt;
+      &lt;<span class="tag">p</span>&gt;{description}&lt;/<span class="tag">p</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}
+
+<span class="cmt">// CardList uses Card</span>
+<span class="kw">function</span> <span class="fn">CardList</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span> <span class="attr">className</span>=<span class="val">"card-grid"</span>&gt;
+      &lt;<span class="tag">Card</span> <span class="attr">title</span>=<span class="val">"React"</span> <span class="attr">description</span>=<span class="val">"UI library"</span> <span class="attr">image</span>=<span class="val">"react.png"</span> /&gt;
+      &lt;<span class="tag">Card</span> <span class="attr">title</span>=<span class="val">"Node.js"</span> <span class="attr">description</span>=<span class="val">"Backend"</span> <span class="attr">image</span>=<span class="val">"node.png"</span> /&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}
+
+<span class="cmt">// App uses CardList</span>
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="tag">Greeting</span> /&gt;
+      &lt;<span class="tag">CardList</span> /&gt;
+    &lt;/&gt;
+  )
+}</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 5 — PROPS
+══════════════════════════════════════ -->
+<div class="chapter" id="ch5">
+  <span class="chapter-num">Chapter 05 — Basics</span>
+  <h2>Props — Data Pass Karna</h2>
+  <p>Props (properties) se hum parent component se child component ko data bhejte hain. Props ek-taraf hote hain — sirf parent se child ko.</p>
+
+  <div class="def">
+    <div class="def-label">Definition</div>
+    <p><strong>Props</strong> read-only data hota hai jo parent component child component ko attributes ki tarah pass karta hai. Child component props ko modify nahi kar sakta — yeh immutable hote hain. Isko "top-down data flow" kehte hain.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — Props Complete Example</span></div>
+    <pre><span class="cmt">// ──────────────────────────────────
+// Parent Component — data bhejta hai
+// ──────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="tag">UserCard</span>
+      <span class="attr">name</span>=<span class="val">"Priya Sharma"</span>
+      <span class="attr">age</span>={<span class="num">23</span>}
+      <span class="attr">isVerified</span>={<span class="kw">true</span>}
+      <span class="attr">skills</span>={[<span class="str">'React'</span>, <span class="str">'CSS'</span>, <span class="str">'Node'</span>]}
+      <span class="attr">onFollow</span>={() => console.<span class="fn">log</span>(<span class="str">'Followed!'</span>)}
+    /&gt;
+  )
+}
+
+<span class="cmt">// ──────────────────────────────────
+// Child Component — props receive karta hai
+// ──────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">UserCard</span>({ name, age, isVerified, skills, onFollow }) {
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span> <span class="attr">className</span>=<span class="val">"user-card"</span>&gt;
+      &lt;<span class="tag">h2</span>&gt;{name} {isVerified &amp;&amp; <span class="str">'✅'</span>}&lt;/<span class="tag">h2</span>&gt;
+      &lt;<span class="tag">p</span>&gt;Age: {age}&lt;/<span class="tag">p</span>&gt;
+      &lt;<span class="tag">ul</span>&gt;
+        {skills.<span class="fn">map</span>(skill =&gt; &lt;<span class="tag">li</span> <span class="attr">key</span>={skill}&gt;{skill}&lt;/<span class="tag">li</span>&gt;)}
+      &lt;/<span class="tag">ul</span>&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={onFollow}&gt;Follow&lt;/<span class="tag">button</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}
+
+<span class="cmt">// ──────────────────────────────────
+// Default Props — agar parent pass na kare
+// ──────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">Button</span>({ text = <span class="str">'Click Me'</span>, color = <span class="str">'blue'</span>, onClick }) {
+  <span class="kw">return</span> &lt;<span class="tag">button</span> <span class="attr">style</span>={{ background: color }} <span class="attr">onClick</span>={onClick}&gt;{text}&lt;/<span class="tag">button</span>&gt;
+}
+
+<span class="cmt">// ──────────────────────────────────
+// children prop — content wrap karna
+// ──────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">Card</span>({ children, title }) {
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span> <span class="attr">className</span>=<span class="val">"card"</span>&gt;
+      &lt;<span class="tag">h3</span>&gt;{title}&lt;/<span class="tag">h3</span>&gt;
+      {children}           <span class="cmt">{/* Jo kuch bhi Card ke andar likha hai */}</span>
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}
+
+<span class="cmt">// Usage:</span>
+&lt;<span class="tag">Card</span> <span class="attr">title</span>=<span class="val">"My Card"</span>&gt;
+  &lt;<span class="tag">p</span>&gt;Yeh children hai!&lt;/<span class="tag">p</span>&gt;
+  &lt;<span class="tag">button</span>&gt;Click&lt;/<span class="tag">button</span>&gt;
+&lt;/<span class="tag">Card</span>&gt;</pre>
+  </div>
+
+  <div class="job-box">
+    <div class="job-label">💼 Interview Question</div>
+    <p>"Props aur State mein kya fark hai?" — Props parent se aate hain aur read-only hote hain. State component ka apna data hota hai jo change ho sakta hai. Props = External data, State = Internal data.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 6 — useState
+══════════════════════════════════════ -->
+<div class="chapter" id="ch6">
+  <span class="chapter-num">Chapter 06 — Basics</span>
+  <h2>useState — Dynamic Data</h2>
+  <p>useState React ka sabse important hook hai. Jab bhi data change hota hai aur UI update hona chahiye — useState use karo.</p>
+
+  <div class="def">
+    <div class="def-label">Definition</div>
+    <p><strong>useState</strong> ek hook hai jo component ko "yaad" rakhne ki power deta hai. Jab bhi state change hoti hai, React automatically component ko re-render karta hai aur naya UI dikhata hai. Yeh <code>[value, setter]</code> return karta hai.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — useState Complete Examples</span></div>
+    <pre><span class="kw">import</span> { <span class="hook">useState</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="cmt">// ── Example 1: Counter ──</span>
+<span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="hook">useState</span>(<span class="num">0</span>)  <span class="cmt">// initial value = 0</span>
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">h2</span>&gt;Count: {count}&lt;/<span class="tag">h2</span>&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setCount</span>(count + <span class="num">1</span>)}&gt;+1&lt;/<span class="tag">button</span>&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setCount</span>(count - <span class="num">1</span>)}&gt;-1&lt;/<span class="tag">button</span>&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setCount</span>(<span class="num">0</span>)}&gt;Reset&lt;/<span class="tag">button</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}
+
+<span class="cmt">// ── Example 2: Toggle (show/hide) ──</span>
+<span class="kw">function</span> <span class="fn">Toggle</span>() {
+  <span class="kw">const</span> [isVisible, setIsVisible] = <span class="hook">useState</span>(<span class="kw">false</span>)
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setIsVisible</span>(!isVisible)}&gt;
+        {isVisible ? <span class="str">'Hide'</span> : <span class="str">'Show'</span>}
+      &lt;/<span class="tag">button</span>&gt;
+      {isVisible &amp;&amp; &lt;<span class="tag">p</span>&gt;Ab main dikh raha hoon! 👋&lt;/<span class="tag">p</span>&gt;}
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}
+
+<span class="cmt">// ── Example 3: Object State ──</span>
+<span class="kw">function</span> <span class="fn">UserForm</span>() {
+  <span class="kw">const</span> [user, setUser] = <span class="hook">useState</span>({ name: <span class="str">''</span>, email: <span class="str">''</span>, age: <span class="str">''</span> })
+
+  <span class="kw">const</span> <span class="fn">handleChange</span> = (e) =&gt; {
+    <span class="fn">setUser</span>({ ...user, [e.target.name]: e.target.value })
+    <span class="cmt">// spread operator se purana data rakho, sirf changed field update karo</span>
+  }
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">form</span>&gt;
+      &lt;<span class="tag">input</span> <span class="attr">name</span>=<span class="val">"name"</span> <span class="attr">value</span>={user.name} <span class="attr">onChange</span>={handleChange} /&gt;
+      &lt;<span class="tag">input</span> <span class="attr">name</span>=<span class="val">"email"</span> <span class="attr">value</span>={user.email} <span class="attr">onChange</span>={handleChange} /&gt;
+      &lt;<span class="tag">p</span>&gt;Name: {user.name}, Email: {user.email}&lt;/<span class="tag">p</span>&gt;
+    &lt;/<span class="tag">form</span>&gt;
+  )
+}
+
+<span class="cmt">// ── Example 4: Array State (Todo List) ──</span>
+<span class="kw">function</span> <span class="fn">TodoList</span>() {
+  <span class="kw">const</span> [todos, setTodos] = <span class="hook">useState</span>([<span class="str">'React seekho'</span>, <span class="str">'Project banao'</span>])
+  <span class="kw">const</span> [input, setInput] = <span class="hook">useState</span>(<span class="str">''</span>)
+
+  <span class="kw">const</span> <span class="fn">addTodo</span> = () =&gt; {
+    <span class="kw">if</span> (!input) <span class="kw">return</span>
+    <span class="fn">setTodos</span>([...todos, input])  <span class="cmt">// spread + new item</span>
+    <span class="fn">setInput</span>(<span class="str">''</span>)
+  }
+
+  <span class="kw">const</span> <span class="fn">removeTodo</span> = (index) =&gt; {
+    <span class="fn">setTodos</span>(todos.<span class="fn">filter</span>((_, i) =&gt; i !== index))
+  }
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">input</span> <span class="attr">value</span>={input} <span class="attr">onChange</span>={e =&gt; <span class="fn">setInput</span>(e.target.value)} /&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={addTodo}&gt;Add&lt;/<span class="tag">button</span>&gt;
+      &lt;<span class="tag">ul</span>&gt;
+        {todos.<span class="fn">map</span>((todo, i) =&gt; (
+          &lt;<span class="tag">li</span> <span class="attr">key</span>={i}&gt;
+            {todo} &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">removeTodo</span>(i)}&gt;❌&lt;/<span class="tag">button</span>&gt;
+          &lt;/<span class="tag">li</span>&gt;
+        ))}
+      &lt;/<span class="tag">ul</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}</pre>
+  </div>
+
+  <div class="warn">
+    <strong>⚠ COMMON MISTAKE</strong><br>
+    State ko directly mutate mat karo: <code>count++</code> ❌ ya <code>user.name = 'Rahul'</code> ❌ — hamesha setter function use karo: <code>setCount(count + 1)</code> ✅
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 7 — useEffect
+══════════════════════════════════════ -->
+<div class="chapter" id="ch7">
+  <span class="chapter-num">Chapter 07 — Basics</span>
+  <h2>useEffect — Side Effects</h2>
+  <p>useEffect tab kaam aata hai jab aapko React ke bahar kuch karna ho — API call, timer, localStorage, DOM manipulation.</p>
+
+  <div class="def">
+    <div class="def-label">Definition</div>
+    <p><strong>useEffect</strong> ek hook hai jo "side effects" handle karta hai. Side effect matlab: kuch aisa kaam jo component render hone ke baad karna hai — data fetch, event listener lagana, timer set karna. Dependency array control karta hai ki effect kab chalega.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — useEffect Patterns</span></div>
+    <pre><span class="kw">import</span> { <span class="hook">useState</span>, <span class="hook">useEffect</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="cmt">// ── Pattern 1: Sirf ek baar chalao (mount pe) ──</span>
+<span class="hook">useEffect</span>(() =&gt; {
+  console.<span class="fn">log</span>(<span class="str">'Component load hua!'</span>)
+  <span class="cmt">// API call, analytics, etc.</span>
+}, [])  <span class="cmt">// ← empty array = sirf mount pe</span>
+
+<span class="cmt">// ── Pattern 2: Har render pe chalao ──</span>
+<span class="hook">useEffect</span>(() =&gt; {
+  console.<span class="fn">log</span>(<span class="str">'Har render pe chalta hai'</span>)
+})  <span class="cmt">// ← no array = har baar</span>
+
+<span class="cmt">// ── Pattern 3: Specific value change pe ──</span>
+<span class="kw">const</span> [query, setQuery] = <span class="hook">useState</span>(<span class="str">''</span>)
+<span class="hook">useEffect</span>(() =&gt; {
+  console.<span class="fn">log</span>(<span class="str">'Query badla:'</span>, query)
+  <span class="cmt">// jab bhi query badlega, yeh chalega</span>
+}, [query])  <span class="cmt">// ← query = dependency</span>
+
+<span class="cmt">// ── Pattern 4: API se data fetch karo ──</span>
+<span class="kw">function</span> <span class="fn">UserList</span>() {
+  <span class="kw">const</span> [users, setUsers] = <span class="hook">useState</span>([])
+  <span class="kw">const</span> [loading, setLoading] = <span class="hook">useState</span>(<span class="kw">true</span>)
+  <span class="kw">const</span> [error, setError] = <span class="hook">useState</span>(<span class="kw">null</span>)
+
+  <span class="hook">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> <span class="fn">fetchUsers</span> = <span class="kw">async</span> () =&gt; {
+      <span class="kw">try</span> {
+        <span class="fn">setLoading</span>(<span class="kw">true</span>)
+        <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://jsonplaceholder.typicode.com/users'</span>)
+        <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>()
+        <span class="fn">setUsers</span>(data)
+      } <span class="kw">catch</span> (err) {
+        <span class="fn">setError</span>(<span class="str">'Data load nahi hua 😢'</span>)
+      } <span class="kw">finally</span> {
+        <span class="fn">setLoading</span>(<span class="kw">false</span>)
+      }
+    }
+    <span class="fn">fetchUsers</span>()
+  }, [])
+
+  <span class="kw">if</span> (loading) <span class="kw">return</span> &lt;<span class="tag">p</span>&gt;Loading...&lt;/<span class="tag">p</span>&gt;
+  <span class="kw">if</span> (error) <span class="kw">return</span> &lt;<span class="tag">p</span>&gt;{error}&lt;/<span class="tag">p</span>&gt;
+
+  <span class="kw">return</span> &lt;<span class="tag">ul</span>&gt;{users.<span class="fn">map</span>(u =&gt; &lt;<span class="tag">li</span> <span class="attr">key</span>={u.id}&gt;{u.name}&lt;/<span class="tag">li</span>&gt;)}&lt;/<span class="tag">ul</span>&gt;
+}
+
+<span class="cmt">// ── Pattern 5: Cleanup (memory leaks rokna) ──</span>
+<span class="hook">useEffect</span>(() =&gt; {
+  <span class="kw">const</span> timer = <span class="fn">setInterval</span>(() =&gt; {
+    console.<span class="fn">log</span>(<span class="str">'Tick!'</span>)
+  }, <span class="num">1000</span>)
+
+  <span class="kw">return</span> () =&gt; <span class="fn">clearInterval</span>(timer)  <span class="cmt">// ← cleanup function</span>
+}, [])</pre>
+  </div>
+
+  <div class="job-box">
+    <div class="job-label">💼 Interview Question</div>
+    <p>"useEffect ki dependency array kya hoti hai?" — Yeh React ko batata hai ki effect kab re-run kare. Empty array = sirf mount pe. Variables = jab vo variables change hon. No array = har render pe. Cleanup function memory leaks rokta hai.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 8 — EVENTS & FORMS
+══════════════════════════════════════ -->
+<div class="chapter" id="ch8">
+  <span class="chapter-num">Chapter 08 — Basics</span>
+  <h2>Events & Forms</h2>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — Events & Controlled Form</span></div>
+    <pre><span class="kw">import</span> { <span class="hook">useState</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="cmt">// ── Common Events ──</span>
+&lt;<span class="tag">button</span> <span class="attr">onClick</span>={handleClick}&gt;Click&lt;/<span class="tag">button</span>&gt;
+&lt;<span class="tag">input</span> <span class="attr">onChange</span>={handleChange} /&gt;
+&lt;<span class="tag">form</span> <span class="attr">onSubmit</span>={handleSubmit}&gt;&lt;/<span class="tag">form</span>&gt;
+&lt;<span class="tag">div</span> <span class="attr">onMouseEnter</span>={handleHover} /&gt;
+&lt;<span class="tag">input</span> <span class="attr">onKeyDown</span>={handleKey} /&gt;
+
+<span class="cmt">// ── Complete Controlled Form Example ──</span>
+<span class="kw">function</span> <span class="fn">LoginForm</span>() {
+  <span class="kw">const</span> [formData, setFormData] = <span class="hook">useState</span>({
+    email: <span class="str">''</span>, password: <span class="str">''</span>
+  })
+  <span class="kw">const</span> [errors, setErrors] = <span class="hook">useState</span>({})
+  <span class="kw">const</span> [success, setSuccess] = <span class="hook">useState</span>(<span class="kw">false</span>)
+
+  <span class="kw">const</span> <span class="fn">validate</span> = () =&gt; {
+    <span class="kw">const</span> newErrors = {}
+    <span class="kw">if</span> (!formData.email.<span class="fn">includes</span>(<span class="str">'@'</span>)) newErrors.email = <span class="str">'Valid email dalo'</span>
+    <span class="kw">if</span> (formData.password.length &lt; <span class="num">6</span>) newErrors.password = <span class="str">'6+ characters chahiye'</span>
+    <span class="kw">return</span> newErrors
+  }
+
+  <span class="kw">const</span> <span class="fn">handleChange</span> = (e) =&gt; {
+    <span class="fn">setFormData</span>({ ...formData, [e.target.name]: e.target.value })
+  }
+
+  <span class="kw">const</span> <span class="fn">handleSubmit</span> = (e) =&gt; {
+    e.<span class="fn">preventDefault</span>()       <span class="cmt">// page reload rokta hai!</span>
+    <span class="kw">const</span> errs = <span class="fn">validate</span>()
+    <span class="kw">if</span> (Object.<span class="fn">keys</span>(errs).length &gt; <span class="num">0</span>) {
+      <span class="fn">setErrors</span>(errs)
+    } <span class="kw">else</span> {
+      <span class="fn">setSuccess</span>(<span class="kw">true</span>)
+      console.<span class="fn">log</span>(<span class="str">'Form submit hua:'</span>, formData)
+    }
+  }
+
+  <span class="kw">if</span> (success) <span class="kw">return</span> &lt;<span class="tag">h2</span>&gt;Login successful! 🎉&lt;/<span class="tag">h2</span>&gt;
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">form</span> <span class="attr">onSubmit</span>={handleSubmit}&gt;
+      &lt;<span class="tag">div</span>&gt;
+        &lt;<span class="tag">input</span>
+          <span class="attr">type</span>=<span class="val">"email"</span> <span class="attr">name</span>=<span class="val">"email"</span>
+          <span class="attr">value</span>={formData.email}
+          <span class="attr">onChange</span>={handleChange}
+          <span class="attr">placeholder</span>=<span class="val">"Email"</span>
+        /&gt;
+        {errors.email &amp;&amp; &lt;<span class="tag">span</span> <span class="attr">style</span>={{color:<span class="str">'red'</span>}}&gt;{errors.email}&lt;/<span class="tag">span</span>&gt;}
+      &lt;/<span class="tag">div</span>&gt;
+      &lt;<span class="tag">div</span>&gt;
+        &lt;<span class="tag">input</span>
+          <span class="attr">type</span>=<span class="val">"password"</span> <span class="attr">name</span>=<span class="val">"password"</span>
+          <span class="attr">value</span>={formData.password}
+          <span class="attr">onChange</span>={handleChange}
+          <span class="attr">placeholder</span>=<span class="val">"Password"</span>
+        /&gt;
+        {errors.password &amp;&amp; &lt;<span class="tag">span</span> <span class="attr">style</span>={{color:<span class="str">'red'</span>}}&gt;{errors.password}&lt;/<span class="tag">span</span>&gt;}
+      &lt;/<span class="tag">div</span>&gt;
+      &lt;<span class="tag">button</span> <span class="attr">type</span>=<span class="val">"submit"</span>&gt;Login&lt;/<span class="tag">button</span>&gt;
+    &lt;/<span class="tag">form</span>&gt;
+  )
+}</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 9 — LISTS & KEYS
+══════════════════════════════════════ -->
+<div class="chapter" id="ch9">
+  <span class="chapter-num">Chapter 09 — Intermediate</span>
+  <h2>Lists & Keys</h2>
+
+  <div class="def">
+    <div class="def-label">Definition</div>
+    <p><strong>key</strong> ek unique identifier hai jo React ko batata hai ki list mein kaun sa item kaun sa hai. Key ke bina React efficiently update nahi kar sakta. Key sibling elements mein unique honi chahiye.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — Lists, Map, Filter, Sort</span></div>
+    <pre><span class="kw">const</span> products = [
+  { id: <span class="num">1</span>, name: <span class="str">'Laptop'</span>, price: <span class="num">55000</span>, category: <span class="str">'electronics'</span> },
+  { id: <span class="num">2</span>, name: <span class="str">'Shirt'</span>, price: <span class="num">799</span>, category: <span class="str">'clothing'</span> },
+  { id: <span class="num">3</span>, name: <span class="str">'Phone'</span>, price: <span class="num">25000</span>, category: <span class="str">'electronics'</span> },
+]
+
+<span class="kw">function</span> <span class="fn">ProductList</span>() {
+  <span class="cmt">// ── Render all ──</span>
+  <span class="kw">return</span> (
+    &lt;<span class="tag">ul</span>&gt;
+      {products.<span class="fn">map</span>(product =&gt; (        <span class="cmt">// map se list render karo</span>
+        &lt;<span class="tag">li</span> <span class="attr">key</span>={product.id}&gt;           <span class="cmt">// key unique honi chahiye</span>
+          {product.name} — ₹{product.price}
+        &lt;/<span class="tag">li</span>&gt;
+      ))}
+    &lt;/<span class="tag">ul</span>&gt;
+  )
+}
+
+<span class="cmt">// ── Filter: sirf electronics dikhao ──</span>
+<span class="kw">const</span> electronics = products
+  .<span class="fn">filter</span>(p =&gt; p.category === <span class="str">'electronics'</span>)
+  .<span class="fn">map</span>(p =&gt; &lt;<span class="tag">li</span> <span class="attr">key</span>={p.id}&gt;{p.name}&lt;/<span class="tag">li</span>&gt;)
+
+<span class="cmt">// ── Sort: price ke hisaab se ──</span>
+<span class="kw">const</span> sorted = [...products]
+  .<span class="fn">sort</span>((a, b) =&gt; a.price - b.price)
+  .<span class="fn">map</span>(p =&gt; &lt;<span class="tag">li</span> <span class="attr">key</span>={p.id}&gt;₹{p.price} — {p.name}&lt;/<span class="tag">li</span>&gt;)</pre>
+  </div>
+
+  <div class="warn">
+    <strong>⚠ KEY MISTAKE</strong><br>
+    <code>key={index}</code> use karne se avoid karo — agar list reorder ho toh bugs aate hain. Hamesha unique ID use karo: <code>key={item.id}</code> ✅
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 10 — CONDITIONAL RENDER
+══════════════════════════════════════ -->
+<div class="chapter" id="ch10">
+  <span class="chapter-num">Chapter 10 — Intermediate</span>
+  <h2>Conditional Rendering</h2>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — All Conditional Patterns</span></div>
+    <pre><span class="cmt">// ── 1. if/else (return se pehle) ──</span>
+<span class="kw">function</span> <span class="fn">Dashboard</span>({ isLoggedIn }) {
+  <span class="kw">if</span> (!isLoggedIn) <span class="kw">return</span> &lt;<span class="tag">LoginPage</span> /&gt;
+  <span class="kw">return</span> &lt;<span class="tag">UserDashboard</span> /&gt;
+}
+
+<span class="cmt">// ── 2. Ternary operator (JSX ke andar) ──</span>
+&lt;<span class="tag">div</span>&gt;
+  {isLoggedIn ? &lt;<span class="tag">UserNav</span> /&gt; : &lt;<span class="tag">GuestNav</span> /&gt;}
+&lt;/<span class="tag">div</span>&gt;
+
+<span class="cmt">// ── 3. && operator (show/hide) ──</span>
+{isVerified &amp;&amp; &lt;<span class="tag">span</span>&gt;✅ Verified&lt;/<span class="tag">span</span>&gt;}
+{error &amp;&amp; &lt;<span class="tag">p</span> <span class="attr">style</span>={{color:<span class="str">'red'</span>}}&gt;{error}&lt;/<span class="tag">p</span>&gt;}
+{loading &amp;&amp; &lt;<span class="tag">Spinner</span> /&gt;}
+
+<span class="cmt">// ── 4. Nullish coalescing ──</span>
+{user?.name ?? <span class="str">'Guest'</span>}
+
+<span class="cmt">// ── 5. Switch-like pattern ──</span>
+<span class="kw">function</span> <span class="fn">StatusBadge</span>({ status }) {
+  <span class="kw">const</span> badges = {
+    active: <span class="str">'🟢 Active'</span>,
+    pending: <span class="str">'🟡 Pending'</span>,
+    blocked: <span class="str">'🔴 Blocked'</span>
+  }
+  <span class="kw">return</span> &lt;<span class="tag">span</span>&gt;{badges[status] ?? <span class="str">'Unknown'</span>}&lt;/<span class="tag">span</span>&gt;
+}</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 11 — useContext
+══════════════════════════════════════ -->
+<div class="chapter" id="ch11">
+  <span class="chapter-num">Chapter 11 — Intermediate</span>
+  <h2>useContext — Global State</h2>
+  <p>Jab aapko data bahut saare nested components mein share karna ho — props drilling ki jagah Context use karo.</p>
+
+  <div class="def">
+    <div class="def-label">Definition</div>
+    <p><strong>Context API</strong> se aap data "globally" share kar sakte ho bina har component ko props pass kiye. Commonly theme, language, user authentication ke liye use hota hai. <code>createContext</code> → <code>Provider</code> → <code>useContext</code> — yeh teeen steps hain.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — Auth Context (Real-World Example)</span></div>
+    <pre><span class="cmt">// ── Step 1: context/AuthContext.jsx ──</span>
+<span class="kw">import</span> { createContext, useContext, <span class="hook">useState</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">const</span> AuthContext = <span class="fn">createContext</span>(<span class="kw">null</span>)
+
+<span class="kw">export function</span> <span class="fn">AuthProvider</span>({ children }) {
+  <span class="kw">const</span> [user, setUser] = <span class="hook">useState</span>(<span class="kw">null</span>)
+
+  <span class="kw">const</span> <span class="fn">login</span> = (userData) =&gt; <span class="fn">setUser</span>(userData)
+  <span class="kw">const</span> <span class="fn">logout</span> = () =&gt; <span class="fn">setUser</span>(<span class="kw">null</span>)
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">AuthContext.Provider</span> <span class="attr">value</span>={{ user, login, logout }}&gt;
+      {children}
+    &lt;/<span class="tag">AuthContext.Provider</span>&gt;
+  )
+}
+
+<span class="cmt">// Custom hook — convenient access</span>
+<span class="kw">export const</span> <span class="fn">useAuth</span> = () =&gt; <span class="fn">useContext</span>(AuthContext)
+
+
+<span class="cmt">// ── Step 2: main.jsx — Wrap app in Provider ──</span>
+&lt;<span class="tag">AuthProvider</span>&gt;
+  &lt;<span class="tag">App</span> /&gt;
+&lt;/<span class="tag">AuthProvider</span>&gt;
+
+
+<span class="cmt">// ── Step 3: Kisi bhi component mein use karo ──</span>
+<span class="kw">function</span> <span class="fn">Navbar</span>() {
+  <span class="kw">const</span> { user, logout } = <span class="fn">useAuth</span>()
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">nav</span>&gt;
+      {user ? (
+        &lt;&gt;
+          &lt;<span class="tag">span</span>&gt;Hello, {user.name}!&lt;/<span class="tag">span</span>&gt;
+          &lt;<span class="tag">button</span> <span class="attr">onClick</span>={logout}&gt;Logout&lt;/<span class="tag">button</span>&gt;
+        &lt;/&gt;
+      ) : (
+        &lt;<span class="tag">button</span>&gt;Login&lt;/<span class="tag">button</span>&gt;
+      )}
+    &lt;/<span class="tag">nav</span>&gt;
+  )
+}</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 12 — useRef & useMemo
+══════════════════════════════════════ -->
+<div class="chapter" id="ch12">
+  <span class="chapter-num">Chapter 12 — Intermediate</span>
+  <h2>useRef, useMemo & useCallback</h2>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — useRef, useMemo, useCallback</span></div>
+    <pre><span class="kw">import</span> { <span class="hook">useRef</span>, <span class="hook">useMemo</span>, <span class="hook">useCallback</span>, <span class="hook">useState</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="cmt">// ── useRef: DOM access ──</span>
+<span class="kw">function</span> <span class="fn">InputFocus</span>() {
+  <span class="kw">const</span> inputRef = <span class="hook">useRef</span>(<span class="kw">null</span>)
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">input</span> <span class="attr">ref</span>={inputRef} /&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =&gt; inputRef.current.<span class="fn">focus</span>()}&gt;
+        Focus Input
+      &lt;/<span class="tag">button</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}
+
+<span class="cmt">// ── useRef: re-render ke beech value yaad rakhna ──</span>
+<span class="kw">function</span> <span class="fn">Timer</span>() {
+  <span class="kw">const</span> timerRef = <span class="hook">useRef</span>(<span class="kw">null</span>)
+
+  <span class="kw">const</span> <span class="fn">start</span> = () =&gt; {
+    timerRef.current = <span class="fn">setInterval</span>(() =&gt; console.<span class="fn">log</span>(<span class="str">'tick'</span>), <span class="num">1000</span>)
+  }
+  <span class="kw">const</span> <span class="fn">stop</span> = () =&gt; <span class="fn">clearInterval</span>(timerRef.current)
+
+  <span class="kw">return</span> &lt;&gt;&lt;<span class="tag">button</span> <span class="attr">onClick</span>={start}&gt;Start&lt;/<span class="tag">button</span>&gt;&lt;<span class="tag">button</span> <span class="attr">onClick</span>={stop}&gt;Stop&lt;/<span class="tag">button</span>&gt;&lt;/&gt;
+}
+
+<span class="cmt">// ── useMemo: expensive calculation cache karo ──</span>
+<span class="kw">function</span> <span class="fn">ProductSearch</span>({ products, query }) {
+  <span class="kw">const</span> filtered = <span class="hook">useMemo</span>(() =&gt; {
+    <span class="cmt">// Yeh sirf tab recalculate hoga jab products ya query change ho</span>
+    <span class="kw">return</span> products.<span class="fn">filter</span>(p =&gt;
+      p.name.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(query.<span class="fn">toLowerCase</span>())
+    )
+  }, [products, query])
+
+  <span class="kw">return</span> &lt;<span class="tag">ul</span>&gt;{filtered.<span class="fn">map</span>(p =&gt; &lt;<span class="tag">li</span> <span class="attr">key</span>={p.id}&gt;{p.name}&lt;/<span class="tag">li</span>&gt;)}&lt;/<span class="tag">ul</span>&gt;
+}
+
+<span class="cmt">// ── useCallback: function reference stable rakhna ──</span>
+<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="hook">useState</span>(<span class="num">0</span>)
+
+  <span class="kw">const</span> <span class="fn">handleClick</span> = <span class="hook">useCallback</span>(() =&gt; {
+    console.<span class="fn">log</span>(<span class="str">'Clicked!'</span>)
+  }, [])  <span class="cmt">// yeh function har render pe naya nahi banega</span>
+
+  <span class="kw">return</span> &lt;<span class="tag">ExpensiveChild</span> <span class="attr">onClick</span>={handleClick} /&gt;
+}</pre>
+  </div>
+
+  <table>
+    <tr><th>Hook</th><th>Kab use karo</th><th>Re-render karta hai?</th></tr>
+    <tr><td><code>useRef</code></td><td>DOM access, value store (without UI update)</td><td>Nahi ❌</td></tr>
+    <tr><td><code>useMemo</code></td><td>Slow calculations cache karna</td><td>Nahi (sirf result cache)</td></tr>
+    <tr><td><code>useCallback</code></td><td>Child props mein functions pass karna</td><td>Nahi (function cache)</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 13 — CUSTOM HOOKS
+══════════════════════════════════════ -->
+<div class="chapter" id="ch13">
+  <span class="chapter-num">Chapter 13 — Intermediate</span>
+  <h2>Custom Hooks</h2>
+  <p>Custom hooks se aap repeated logic extract karke reuse kar sakte ho. Yeh interview mein bahut impress karta hai!</p>
+
+  <div class="def">
+    <div class="def-label">Definition</div>
+    <p><strong>Custom Hook</strong> ek JavaScript function hai jiska naam <code>use</code> se shuru hota hai aur jo React hooks use karta hai. Isse aap stateful logic ko components se alag rakh sakte ho aur multiple jagah reuse kar sakte ho.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — 4 Useful Custom Hooks</span></div>
+    <pre><span class="cmt">// ── Hook 1: useFetch — API data lao ──</span>
+<span class="kw">function</span> <span class="fn">useFetch</span>(url) {
+  <span class="kw">const</span> [data, setData] = <span class="hook">useState</span>(<span class="kw">null</span>)
+  <span class="kw">const</span> [loading, setLoading] = <span class="hook">useState</span>(<span class="kw">true</span>)
+  <span class="kw">const</span> [error, setError] = <span class="hook">useState</span>(<span class="kw">null</span>)
+
+  <span class="hook">useEffect</span>(() =&gt; {
+    <span class="fn">fetch</span>(url)
+      .<span class="fn">then</span>(res =&gt; res.<span class="fn">json</span>())
+      .<span class="fn">then</span>(setData)
+      .<span class="fn">catch</span>(setError)
+      .<span class="fn">finally</span>(() =&gt; <span class="fn">setLoading</span>(<span class="kw">false</span>))
+  }, [url])
+
+  <span class="kw">return</span> { data, loading, error }
+}
+
+<span class="cmt">// Usage:</span>
+<span class="kw">function</span> <span class="fn">Users</span>() {
+  <span class="kw">const</span> { data, loading, error } = <span class="fn">useFetch</span>(<span class="str">'https://api.example.com/users'</span>)
+  <span class="kw">if</span> (loading) <span class="kw">return</span> &lt;<span class="tag">p</span>&gt;Loading...&lt;/<span class="tag">p</span>&gt;
+  <span class="kw">if</span> (error) <span class="kw">return</span> &lt;<span class="tag">p</span>&gt;Error!&lt;/<span class="tag">p</span>&gt;
+  <span class="kw">return</span> &lt;<span class="tag">p</span>&gt;{data?.length} users found&lt;/<span class="tag">p</span>&gt;
+}
+
+<span class="cmt">// ── Hook 2: useLocalStorage — localStorage sync ──</span>
+<span class="kw">function</span> <span class="fn">useLocalStorage</span>(key, initialValue) {
+  <span class="kw">const</span> [value, setValue] = <span class="hook">useState</span>(() =&gt; {
+    <span class="kw">const</span> stored = localStorage.<span class="fn">getItem</span>(key)
+    <span class="kw">return</span> stored ? <span class="fn">JSON</span>.<span class="fn">parse</span>(stored) : initialValue
+  })
+
+  <span class="kw">const</span> <span class="fn">setStoredValue</span> = (val) =&gt; {
+    <span class="fn">setValue</span>(val)
+    localStorage.<span class="fn">setItem</span>(key, <span class="fn">JSON</span>.<span class="fn">stringify</span>(val))
+  }
+
+  <span class="kw">return</span> [value, setStoredValue]
+}
+
+<span class="cmt">// ── Hook 3: useDebounce — search delay ──</span>
+<span class="kw">function</span> <span class="fn">useDebounce</span>(value, delay = <span class="num">500</span>) {
+  <span class="kw">const</span> [debouncedValue, setDebouncedValue] = <span class="hook">useState</span>(value)
+
+  <span class="hook">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> timer = <span class="fn">setTimeout</span>(() =&gt; <span class="fn">setDebouncedValue</span>(value), delay)
+    <span class="kw">return</span> () =&gt; <span class="fn">clearTimeout</span>(timer)
+  }, [value, delay])
+
+  <span class="kw">return</span> debouncedValue
+}
+
+<span class="cmt">// ── Hook 4: useWindowSize — responsive logic ──</span>
+<span class="kw">function</span> <span class="fn">useWindowSize</span>() {
+  <span class="kw">const</span> [size, setSize] = <span class="hook">useState</span>({ width: window.innerWidth, height: window.innerHeight })
+
+  <span class="hook">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> handler = () =&gt; <span class="fn">setSize</span>({ width: window.innerWidth, height: window.innerHeight })
+    window.<span class="fn">addEventListener</span>(<span class="str">'resize'</span>, handler)
+    <span class="kw">return</span> () =&gt; window.<span class="fn">removeEventListener</span>(<span class="str">'resize'</span>, handler)
+  }, [])
+
+  <span class="kw">return</span> size
+}</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 14 — REACT ROUTER
+══════════════════════════════════════ -->
+<div class="chapter" id="ch14">
+  <span class="chapter-num">Chapter 14 — Intermediate</span>
+  <h2>React Router v6</h2>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">TERMINAL + JSX — React Router Setup</span></div>
+    <pre><span class="cmt"># Install karo</span>
+npm install react-router-dom
+
+<span class="cmt">// ── App.jsx — Routes setup ──</span>
+<span class="kw">import</span> { BrowserRouter, Routes, Route, Link, NavLink, Navigate } <span class="kw">from</span> <span class="str">'react-router-dom'</span>
+<span class="kw">import</span> Home <span class="kw">from</span> <span class="str">'./pages/Home'</span>
+<span class="kw">import</span> About <span class="kw">from</span> <span class="str">'./pages/About'</span>
+<span class="kw">import</span> ProductDetail <span class="kw">from</span> <span class="str">'./pages/ProductDetail'</span>
+<span class="kw">import</span> NotFound <span class="kw">from</span> <span class="str">'./pages/NotFound'</span>
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> isLoggedIn = <span class="kw">true</span>  <span class="cmt">// auth check</span>
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">BrowserRouter</span>&gt;
+      &lt;<span class="tag">nav</span>&gt;
+        <span class="cmt">{/* Link — page reload nahi hota */}</span>
+        &lt;<span class="tag">Link</span> <span class="attr">to</span>=<span class="val">"/"</span>&gt;Home&lt;/<span class="tag">Link</span>&gt;
+        <span class="cmt">{/* NavLink — active class automatically lagate hai */}</span>
+        &lt;<span class="tag">NavLink</span> <span class="attr">to</span>=<span class="val">"/about"</span> <span class="attr">className</span>={({ isActive }) =&gt; isActive ? <span class="str">'active'</span> : <span class="str">''</span>}&gt;
+          About
+        &lt;/<span class="tag">NavLink</span>&gt;
+      &lt;/<span class="tag">nav</span>&gt;
+
+      &lt;<span class="tag">Routes</span>&gt;
+        &lt;<span class="tag">Route</span> <span class="attr">path</span>=<span class="val">"/"</span> <span class="attr">element</span>={&lt;<span class="tag">Home</span> /&gt;} /&gt;
+        &lt;<span class="tag">Route</span> <span class="attr">path</span>=<span class="val">"/about"</span> <span class="attr">element</span>={&lt;<span class="tag">About</span> /&gt;} /&gt;
+
+        <span class="cmt">{/* Dynamic route */}</span>
+        &lt;<span class="tag">Route</span> <span class="attr">path</span>=<span class="val">"/product/:id"</span> <span class="attr">element</span>={&lt;<span class="tag">ProductDetail</span> /&gt;} /&gt;
+
+        <span class="cmt">{/* Protected route */}</span>
+        &lt;<span class="tag">Route</span>
+          <span class="attr">path</span>=<span class="val">"/dashboard"</span>
+          <span class="attr">element</span>={isLoggedIn ? &lt;<span class="tag">Dashboard</span> /&gt; : &lt;<span class="tag">Navigate</span> <span class="attr">to</span>=<span class="val">"/"</span> /&gt;}
+        /&gt;
+
+        <span class="cmt">{/* 404 */}</span>
+        &lt;<span class="tag">Route</span> <span class="attr">path</span>=<span class="val">"*"</span> <span class="attr">element</span>={&lt;<span class="tag">NotFound</span> /&gt;} /&gt;
+      &lt;/<span class="tag">Routes</span>&gt;
+    &lt;/<span class="tag">BrowserRouter</span>&gt;
+  )
+}
+
+<span class="cmt">// ── ProductDetail — URL params use karna ──</span>
+<span class="kw">import</span> { useParams, useNavigate, useSearchParams } <span class="kw">from</span> <span class="str">'react-router-dom'</span>
+
+<span class="kw">function</span> <span class="fn">ProductDetail</span>() {
+  <span class="kw">const</span> { id } = <span class="fn">useParams</span>()           <span class="cmt">// /product/42 → id = "42"</span>
+  <span class="kw">const</span> navigate = <span class="fn">useNavigate</span>()        <span class="cmt">// programmatic navigation</span>
+  <span class="kw">const</span> [searchParams] = <span class="fn">useSearchParams</span>() <span class="cmt">// ?tab=reviews</span>
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">h1</span>&gt;Product #{id}&lt;/<span class="tag">h1</span>&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">navigate</span>(-<span class="num">1</span>)}&gt;← Go Back&lt;/<span class="tag">button</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 15 — REACT 19 FEATURES
+══════════════════════════════════════ -->
+<div class="chapter" id="ch15">
+  <span class="chapter-num">Chapter 15 — Advanced</span>
+  <h2>React 19 — New Features <span class="new19">NEW</span></h2>
+  <p>React 19 (2025) mein kuch game-changing features aaye hain. Yeh job interviews mein sabse zyada pooche jaate hain.</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — useActionState (React 19) 🆕</span></div>
+    <pre><span class="kw">import</span> { <span class="hook">useActionState</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="cmt">// Pehle (React 18): manually loading/error manage karna padta tha</span>
+<span class="cmt">// Ab (React 19): useActionState sab handle karta hai!</span>
+
+<span class="kw">async function</span> <span class="fn">loginAction</span>(prevState, formData) {
+  <span class="kw">const</span> email = formData.<span class="fn">get</span>(<span class="str">'email'</span>)
+  <span class="kw">const</span> password = formData.<span class="fn">get</span>(<span class="str">'password'</span>)
+
+  <span class="kw">try</span> {
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">loginAPI</span>({ email, password })
+    <span class="kw">return</span> { success: <span class="kw">true</span>, user }
+  } <span class="kw">catch</span> (err) {
+    <span class="kw">return</span> { success: <span class="kw">false</span>, error: err.message }
+  }
+}
+
+<span class="kw">function</span> <span class="fn">LoginForm</span>() {
+  <span class="kw">const</span> [state, formAction, isPending] = <span class="hook">useActionState</span>(loginAction, <span class="kw">null</span>)
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">form</span> <span class="attr">action</span>={formAction}&gt;
+      &lt;<span class="tag">input</span> <span class="attr">name</span>=<span class="val">"email"</span> <span class="attr">type</span>=<span class="val">"email"</span> /&gt;
+      &lt;<span class="tag">input</span> <span class="attr">name</span>=<span class="val">"password"</span> <span class="attr">type</span>=<span class="val">"password"</span> /&gt;
+
+      &lt;<span class="tag">button</span> <span class="attr">disabled</span>={isPending}&gt;
+        {isPending ? <span class="str">'Logging in...'</span> : <span class="str">'Login'</span>}
+      &lt;/<span class="tag">button</span>&gt;
+
+      {state?.error &amp;&amp; &lt;<span class="tag">p</span> <span class="attr">style</span>={{color:<span class="str">'red'</span>}}&gt;{state.error}&lt;/<span class="tag">p</span>&gt;}
+      {state?.success &amp;&amp; &lt;<span class="tag">p</span>&gt;Welcome {state.user.name}!&lt;/<span class="tag">p</span>&gt;}
+    &lt;/<span class="tag">form</span>&gt;
+  )
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — useOptimistic (React 19) 🆕</span></div>
+    <pre><span class="kw">import</span> { <span class="hook">useOptimistic</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="cmt">// Optimistic UI: server response se pehle hi UI update dikhao</span>
+<span class="cmt">// Like/Unlike button ka perfect example</span>
+
+<span class="kw">function</span> <span class="fn">LikeButton</span>({ post }) {
+  <span class="kw">const</span> [optimisticPost, addOptimisticLike] = <span class="hook">useOptimistic</span>(
+    post,
+    (currentPost, isLiked) =&gt; ({
+      ...currentPost,
+      likeCount: isLiked ? currentPost.likeCount + <span class="num">1</span> : currentPost.likeCount - <span class="num">1</span>,
+      isLiked
+    })
+  )
+
+  <span class="kw">const</span> <span class="fn">handleLike</span> = <span class="kw">async</span> () =&gt; {
+    <span class="fn">addOptimisticLike</span>(!optimisticPost.isLiked)  <span class="cmt">// Turant UI update</span>
+    <span class="kw">await</span> <span class="fn">toggleLikeAPI</span>(post.id)               <span class="cmt">// Background mein API call</span>
+  }
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">button</span> <span class="attr">onClick</span>={handleLike}&gt;
+      {optimisticPost.isLiked ? <span class="str">'❤️'</span> : <span class="str">'🤍'</span>} {optimisticPost.likeCount}
+    &lt;/<span class="tag">button</span>&gt;
+  )
+}</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 16 — use() HOOK
+══════════════════════════════════════ -->
+<div class="chapter" id="ch16">
+  <span class="chapter-num">Chapter 16 — Advanced</span>
+  <h2>use() Hook <span class="new19">NEW in React 19</span></h2>
+
+  <div class="def">
+    <div class="def-label">Definition</div>
+    <p><strong>use()</strong> ek new React 19 hook hai jo Promises aur Context ko directly "unwrap" kar sakta hai. Yeh conditions aur loops ke andar bhi call ho sakta hai — baaki hooks ke unlike!</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — use() Hook Examples</span></div>
+    <pre><span class="kw">import</span> { use, Suspense } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="cmt">// ── Example 1: Promise unwrap karna ──</span>
+<span class="kw">function</span> <span class="fn">UserProfile</span>({ userPromise }) {
+  <span class="kw">const</span> user = <span class="fn">use</span>(userPromise)  <span class="cmt">// Suspense ke saath kaam karta hai</span>
+
+  <span class="kw">return</span> &lt;<span class="tag">h1</span>&gt;{user.name}&lt;/<span class="tag">h1</span>&gt;
+}
+
+<span class="cmt">// Usage: Suspense boundary banana padega</span>
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> userPromise = <span class="fn">fetch</span>(<span class="str">'/api/user'</span>).<span class="fn">then</span>(r =&gt; r.<span class="fn">json</span>())
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">Suspense</span> <span class="attr">fallback</span>={&lt;<span class="tag">p</span>&gt;Loading user...&lt;/<span class="tag">p</span>&gt;}&gt;
+      &lt;<span class="tag">UserProfile</span> <span class="attr">userPromise</span>={userPromise} /&gt;
+    &lt;/<span class="tag">Suspense</span>&gt;
+  )
+}
+
+<span class="cmt">// ── Example 2: Conditional Context read (use() only!) ──</span>
+<span class="kw">function</span> <span class="fn">ThemeButton</span>({ showTheme }) {
+  <span class="kw">if</span> (showTheme) {
+    <span class="kw">const</span> theme = <span class="fn">use</span>(ThemeContext)  <span class="cmt">// ✅ condition ke andar!</span>
+    <span class="kw">return</span> &lt;<span class="tag">button</span> <span class="attr">style</span>={{ background: theme.primary }}&gt;Themed&lt;/<span class="tag">button</span>&gt;
+  }
+  <span class="kw">return</span> &lt;<span class="tag">button</span>&gt;Default&lt;/<span class="tag">button</span>&gt;
+}</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 17 — SERVER COMPONENTS
+══════════════════════════════════════ -->
+<div class="chapter" id="ch17">
+  <span class="chapter-num">Chapter 17 — Advanced</span>
+  <h2>React Server Components <span class="new19">React 19 + Next.js</span></h2>
+
+  <div class="def">
+    <div class="def-label">Definition</div>
+    <p><strong>Server Components</strong> server pe render hote hain — browser tak JavaScript nahi jaata. Yeh database access, file system access kar sakte hain. Client components ko <code>'use client'</code> directive se mark karna padta hai.</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — Server vs Client Components</span></div>
+    <pre><span class="cmt">// ── Server Component (default in Next.js App Router) ──</span>
+<span class="cmt">// Koi directive nahi = Server Component</span>
+<span class="kw">async function</span> <span class="fn">ProductList</span>() {
+  <span class="cmt">// Direct database access! (No API needed)</span>
+  <span class="kw">const</span> products = <span class="kw">await</span> db.query(<span class="str">'SELECT * FROM products'</span>)
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">ul</span>&gt;
+      {products.<span class="fn">map</span>(p =&gt; (
+        &lt;<span class="tag">li</span> <span class="attr">key</span>={p.id}&gt;
+          {p.name}
+          &lt;<span class="tag">AddToCartButton</span> <span class="attr">id</span>={p.id} /&gt;  <span class="cmt">{/* Client component */}</span>
+        &lt;/<span class="tag">li</span>&gt;
+      ))}
+    &lt;/<span class="tag">ul</span>&gt;
+  )
+}
+
+<span class="cmt">// ── Client Component (interactivity chahiye toh) ──</span>
+<span class="str">'use client'</span>  <span class="cmt">// ← yeh directive lagana padta hai</span>
+
+<span class="kw">import</span> { <span class="hook">useState</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">function</span> <span class="fn">AddToCartButton</span>({ id }) {
+  <span class="kw">const</span> [added, setAdded] = <span class="hook">useState</span>(<span class="kw">false</span>)
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setAdded</span>(<span class="kw">true</span>)}&gt;
+      {added ? <span class="str">'✅ Added'</span> : <span class="str">'Add to Cart'</span>}
+    &lt;/<span class="tag">button</span>&gt;
+  )
+}</pre>
+  </div>
+
+  <table>
+    <tr><th>Feature</th><th>Server Component</th><th>Client Component</th></tr>
+    <tr><td>useState/useEffect</td><td>❌ Nahi</td><td>✅ Haan</td></tr>
+    <tr><td>Database access</td><td>✅ Direct</td><td>❌ API chahiye</td></tr>
+    <tr><td>Event handlers</td><td>❌ Nahi</td><td>✅ Haan</td></tr>
+    <tr><td>Bundle size</td><td>0 JS to client</td><td>JS bundle mein</td></tr>
+    <tr><td>Directive</td><td>None (default)</td><td>'use client'</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 18 — ERROR BOUNDARIES
+══════════════════════════════════════ -->
+<div class="chapter" id="ch18">
+  <span class="chapter-num">Chapter 18 — Advanced</span>
+  <h2>Error Boundaries & Suspense</h2>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — Error Boundary + Suspense</span></div>
+    <pre><span class="kw">import</span> { Component, Suspense } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="cmt">// ── Error Boundary: crash se poora app bachao ──</span>
+<span class="kw">class</span> <span class="fn">ErrorBoundary</span> <span class="kw">extends</span> Component {
+  <span class="kw">constructor</span>(props) {
+    <span class="kw">super</span>(props)
+    <span class="kw">this</span>.state = { hasError: <span class="kw">false</span>, error: <span class="kw">null</span> }
+  }
+
+  <span class="kw">static</span> <span class="fn">getDerivedStateFromError</span>(error) {
+    <span class="kw">return</span> { hasError: <span class="kw">true</span>, error }
+  }
+
+  <span class="fn">componentDidCatch</span>(error, info) {
+    console.<span class="fn">error</span>(<span class="str">'Error caught:'</span>, error, info)
+  }
+
+  <span class="fn">render</span>() {
+    <span class="kw">if</span> (<span class="kw">this</span>.state.hasError) {
+      <span class="kw">return</span> (
+        &lt;<span class="tag">div</span>&gt;
+          &lt;<span class="tag">h2</span>&gt;Kuch gadbad ho gayi 😢&lt;/<span class="tag">h2</span>&gt;
+          &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =&gt; <span class="kw">this</span>.<span class="fn">setState</span>({ hasError: <span class="kw">false</span> })}&gt;
+            Try Again
+          &lt;/<span class="tag">button</span>&gt;
+        &lt;/<span class="tag">div</span>&gt;
+      )
+    }
+    <span class="kw">return this</span>.props.children
+  }
+}
+
+<span class="cmt">// ── Usage: Wrap components ──</span>
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="tag">ErrorBoundary</span>&gt;
+      &lt;<span class="tag">Suspense</span> <span class="attr">fallback</span>={&lt;<span class="tag">div</span>&gt;Loading...&lt;/<span class="tag">div</span>&gt;}&gt;
+        &lt;<span class="tag">LazyComponent</span> /&gt;
+      &lt;/<span class="tag">Suspense</span>&gt;
+    &lt;/<span class="tag">ErrorBoundary</span>&gt;
+  )
+}
+
+<span class="cmt">// ── Lazy Loading: Code Splitting ──</span>
+<span class="kw">import</span> { lazy } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">const</span> Dashboard = <span class="fn">lazy</span>(() =&gt; <span class="kw">import</span>(<span class="str">'./pages/Dashboard'</span>))
+<span class="kw">const</span> Profile = <span class="fn">lazy</span>(() =&gt; <span class="kw">import</span>(<span class="str">'./pages/Profile'</span>))</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAPTER 19 — PERFORMANCE
+══════════════════════════════════════ -->
+<div class="chapter" id="ch19">
+  <span class="chapter-num">Chapter 19 — Advanced</span>
+  <h2>Performance Optimization</h2>
+
+  <table>
+    <tr><th>Technique</th><th>Kab use karo</th><th>How</th></tr>
+    <tr><td>React.memo</td><td>Child unnecessary re-render kar raha ho</td><td><code>export default React.memo(Component)</code></td></tr>
+    <tr><td>useMemo</td><td>Expensive calculation bar bar ho</td><td>Cache calculation result</td></tr>
+    <tr><td>useCallback</td><td>Function props child ko pass ho</td><td>Cache function reference</td></tr>
+    <tr><td>Lazy + Suspense</td><td>Large pages/components</td><td>Code splitting</td></tr>
+    <tr><td>Virtualization</td><td>1000+ items ki list</td><td>react-window library</td></tr>
+    <tr><td>Image optimization</td><td>Heavy images</td><td>Next/Image ya loading="lazy"</td></tr>
+  </table>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — React.memo Example</span></div>
+    <pre><span class="kw">import</span> React, { <span class="hook">useState</span>, <span class="hook">useCallback</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="cmt">// Bina memo ke: parent ke har render pe Child bhi render hota hai</span>
+<span class="cmt">// memo ke saath: sirf tab render hoga jab props change hon</span>
+<span class="kw">const</span> <span class="fn">ExpensiveChild</span> = React.<span class="fn">memo</span>(<span class="kw">function</span> <span class="fn">Child</span>({ onAction, label }) {
+  console.<span class="fn">log</span>(<span class="str">'Child render hua'</span>)
+  <span class="kw">return</span> &lt;<span class="tag">button</span> <span class="attr">onClick</span>={onAction}&gt;{label}&lt;/<span class="tag">button</span>&gt;
+})
+
+<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="hook">useState</span>(<span class="num">0</span>)
+  <span class="kw">const</span> [text, setText] = <span class="hook">useState</span>(<span class="str">''</span>)
+
+  <span class="cmt">// useCallback: function reference stable rakhta hai</span>
+  <span class="kw">const</span> <span class="fn">handleAction</span> = <span class="hook">useCallback</span>(() =&gt; {
+    console.<span class="fn">log</span>(<span class="str">'Action!'</span>)
+  }, [])  <span class="cmt">// empty = kabhi nahi badle ga</span>
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">input</span> <span class="attr">onChange</span>={e =&gt; <span class="fn">setText</span>(e.target.value)} /&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>)}&gt;Count: {count}&lt;/<span class="tag">button</span>&gt;
+      <span class="cmt">{/* Text type karne se Child re-render nahi hoga ✅ */}</span>
+      &lt;<span class="tag">ExpensiveChild</span> <span class="attr">onAction</span>={handleAction} <span class="attr">label</span>=<span class="val">"Click Me"</span> /&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}</pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     JOB-ORIENTED PROJECTS
+══════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="chapter" id="proj">
+  <span class="chapter-num">Projects</span>
+  <h2>Job-Oriented React Projects</h2>
+  <p>Yeh 6 projects resume pe daalo — companies yahi dekhnna chahti hain. Har project mein code structure, important concepts aur jo cheezein cover karega vo bhi likha hai.</p>
+
+  <!-- PROJECT 1 -->
+  <div class="project">
+    <div class="project-header">
+      <div class="project-num">01</div>
+      <div>
+        <div class="project-title">GitHub User Finder</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">GitHub API integration + Search + Debounce</div>
+      </div>
+      <span class="project-level level-beginner">Beginner</span>
+    </div>
+    <div class="project-body">
+      <div class="project-desc">User GitHub username type kare, real-time unka profile, repos aur followers dikhao. Debounce se unnecessary API calls rokna sikhoge.</div>
+      <div class="skills-used">
+        <span class="skill-tag">useState</span><span class="skill-tag">useEffect</span><span class="skill-tag">useDebounce</span>
+        <span class="skill-tag">Fetch API</span><span class="skill-tag">Loading States</span>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — GitHub Finder Core Logic</span></div>
+        <pre><span class="kw">import</span> { <span class="hook">useState</span>, <span class="hook">useEffect</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">function</span> <span class="fn">useDebounce</span>(value, delay = <span class="num">500</span>) {
+  <span class="kw">const</span> [debounced, setDebounced] = <span class="hook">useState</span>(value)
+  <span class="hook">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> t = <span class="fn">setTimeout</span>(() =&gt; <span class="fn">setDebounced</span>(value), delay)
+    <span class="kw">return</span> () =&gt; <span class="fn">clearTimeout</span>(t)
+  }, [value, delay])
+  <span class="kw">return</span> debounced
+}
+
+<span class="kw">function</span> <span class="fn">GitHubFinder</span>() {
+  <span class="kw">const</span> [username, setUsername] = <span class="hook">useState</span>(<span class="str">''</span>)
+  <span class="kw">const</span> [user, setUser] = <span class="hook">useState</span>(<span class="kw">null</span>)
+  <span class="kw">const</span> [loading, setLoading] = <span class="hook">useState</span>(<span class="kw">false</span>)
+  <span class="kw">const</span> [error, setError] = <span class="hook">useState</span>(<span class="kw">null</span>)
+
+  <span class="kw">const</span> debouncedUsername = <span class="fn">useDebounce</span>(username, <span class="num">600</span>)
+
+  <span class="hook">useEffect</span>(() =&gt; {
+    <span class="kw">if</span> (!debouncedUsername) { <span class="fn">setUser</span>(<span class="kw">null</span>); <span class="kw">return</span> }
+
+    <span class="kw">const</span> <span class="fn">fetchUser</span> = <span class="kw">async</span> () =&gt; {
+      <span class="fn">setLoading</span>(<span class="kw">true</span>); <span class="fn">setError</span>(<span class="kw">null</span>)
+      <span class="kw">try</span> {
+        <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(`https://api.github.com/users/${debouncedUsername}`)
+        <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> Error(<span class="str">'User not found'</span>)
+        <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>()
+        <span class="fn">setUser</span>(data)
+      } <span class="kw">catch</span> (err) {
+        <span class="fn">setError</span>(err.message)
+      } <span class="kw">finally</span> {
+        <span class="fn">setLoading</span>(<span class="kw">false</span>)
+      }
+    }
+    <span class="fn">fetchUser</span>()
+  }, [debouncedUsername])
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">h1</span>&gt;GitHub Finder&lt;/<span class="tag">h1</span>&gt;
+      &lt;<span class="tag">input</span>
+        <span class="attr">value</span>={username}
+        <span class="attr">onChange</span>={e =&gt; <span class="fn">setUsername</span>(e.target.value)}
+        <span class="attr">placeholder</span>=<span class="val">"GitHub username dhundho..."</span>
+      /&gt;
+      {loading &amp;&amp; &lt;<span class="tag">p</span>&gt;Searching...&lt;/<span class="tag">p</span>&gt;}
+      {error &amp;&amp; &lt;<span class="tag">p</span> <span class="attr">style</span>={{color:<span class="str">'red'</span>}}&gt;{error}&lt;/<span class="tag">p</span>&gt;}
+      {user &amp;&amp; (
+        &lt;<span class="tag">div</span>&gt;
+          &lt;<span class="tag">img</span> <span class="attr">src</span>={user.avatar_url} <span class="attr">alt</span>={user.name} <span class="attr">width</span>=<span class="val">"80"</span> /&gt;
+          &lt;<span class="tag">h2</span>&gt;{user.name}&lt;/<span class="tag">h2</span>&gt;
+          &lt;<span class="tag">p</span>&gt;{user.bio}&lt;/<span class="tag">p</span>&gt;
+          &lt;<span class="tag">p</span>&gt;⭐ Repos: {user.public_repos} | 👥 Followers: {user.followers}&lt;/<span class="tag">p</span>&gt;
+        &lt;/<span class="tag">div</span>&gt;
+      )}
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT 2 -->
+  <div class="project">
+    <div class="project-header">
+      <div class="project-num">02</div>
+      <div>
+        <div class="project-title">E-Commerce Product Cart</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Context API + localStorage + Filter + Sort</div>
+      </div>
+      <span class="project-level level-mid">Intermediate</span>
+    </div>
+    <div class="project-body">
+      <div class="project-desc">Product listing, cart add/remove, quantity update, total calculation, filter by category, localStorage mein cart save. Resume ke liye best project!</div>
+      <div class="skills-used">
+        <span class="skill-tag">useContext</span><span class="skill-tag">useReducer</span><span class="skill-tag">localStorage</span>
+        <span class="skill-tag">React Router</span><span class="skill-tag">Filter/Sort</span>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — Cart Context with useReducer</span></div>
+        <pre><span class="kw">import</span> { createContext, useContext, useReducer, <span class="hook">useEffect</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">const</span> CartContext = <span class="fn">createContext</span>()
+
+<span class="kw">function</span> <span class="fn">cartReducer</span>(state, action) {
+  <span class="kw">switch</span> (action.type) {
+    <span class="kw">case</span> <span class="str">'ADD'</span>: {
+      <span class="kw">const</span> exists = state.<span class="fn">find</span>(i =&gt; i.id === action.payload.id)
+      <span class="kw">if</span> (exists) {
+        <span class="kw">return</span> state.<span class="fn">map</span>(i =&gt; i.id === action.payload.id
+          ? { ...i, qty: i.qty + <span class="num">1</span> } : i)
+      }
+      <span class="kw">return</span> [...state, { ...action.payload, qty: <span class="num">1</span> }]
+    }
+    <span class="kw">case</span> <span class="str">'REMOVE'</span>:
+      <span class="kw">return</span> state.<span class="fn">filter</span>(i =&gt; i.id !== action.payload)
+    <span class="kw">case</span> <span class="str">'UPDATE_QTY'</span>:
+      <span class="kw">return</span> state.<span class="fn">map</span>(i =&gt; i.id === action.payload.id
+        ? { ...i, qty: action.payload.qty } : i)
+    <span class="kw">case</span> <span class="str">'CLEAR'</span>:
+      <span class="kw">return</span> []
+    <span class="kw">default</span>:
+      <span class="kw">return</span> state
+  }
+}
+
+<span class="kw">export function</span> <span class="fn">CartProvider</span>({ children }) {
+  <span class="kw">const</span> [cart, dispatch] = <span class="fn">useReducer</span>(
+    cartReducer,
+    [],
+    () =&gt; <span class="fn">JSON</span>.<span class="fn">parse</span>(localStorage.<span class="fn">getItem</span>(<span class="str">'cart'</span>) ?? <span class="str">'[]'</span>)
+  )
+
+  <span class="hook">useEffect</span>(() =&gt; {
+    localStorage.<span class="fn">setItem</span>(<span class="str">'cart'</span>, <span class="fn">JSON</span>.<span class="fn">stringify</span>(cart))
+  }, [cart])
+
+  <span class="kw">const</span> total = cart.<span class="fn">reduce</span>((sum, i) =&gt; sum + i.price * i.qty, <span class="num">0</span>)
+  <span class="kw">const</span> itemCount = cart.<span class="fn">reduce</span>((sum, i) =&gt; sum + i.qty, <span class="num">0</span>)
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">CartContext.Provider</span> <span class="attr">value</span>={{ cart, dispatch, total, itemCount }}&gt;
+      {children}
+    &lt;/<span class="tag">CartContext.Provider</span>&gt;
+  )
+}
+
+<span class="kw">export const</span> <span class="fn">useCart</span> = () =&gt; <span class="fn">useContext</span>(CartContext)
+
+<span class="cmt">// Usage in any component:</span>
+<span class="kw">const</span> { cart, dispatch, total, itemCount } = <span class="fn">useCart</span>()
+dispatch({ type: <span class="str">'ADD'</span>, payload: product })
+dispatch({ type: <span class="str">'REMOVE'</span>, payload: productId })</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT 3 -->
+  <div class="project">
+    <div class="project-header">
+      <div class="project-num">03</div>
+      <div>
+        <div class="project-title">Real-Time Weather App</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">OpenWeather API + Geolocation + Custom Hook</div>
+      </div>
+      <span class="project-level level-mid">Intermediate</span>
+    </div>
+    <div class="project-body">
+      <div class="project-desc">Current location ka weather, 5-day forecast, city search, Celsius/Fahrenheit toggle. OpenWeatherMap free API use karo.</div>
+      <div class="skills-used">
+        <span class="skill-tag">Custom Hook</span><span class="skill-tag">Geolocation API</span><span class="skill-tag">axios</span>
+        <span class="skill-tag">Error Handling</span><span class="skill-tag">Loading States</span>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — useWeather Custom Hook</span></div>
+        <pre><span class="kw">import</span> { <span class="hook">useState</span>, <span class="hook">useEffect</span> } <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">import</span> axios <span class="kw">from</span> <span class="str">'axios'</span>
+
+<span class="kw">const</span> API_KEY = <span class="str">'your_key_here'</span>
+<span class="kw">const</span> BASE = <span class="str">'https://api.openweathermap.org/data/2.5'</span>
+
+<span class="kw">function</span> <span class="fn">useWeather</span>(city) {
+  <span class="kw">const</span> [weather, setWeather] = <span class="hook">useState</span>(<span class="kw">null</span>)
+  <span class="kw">const</span> [forecast, setForecast] = <span class="hook">useState</span>([])
+  <span class="kw">const</span> [loading, setLoading] = <span class="hook">useState</span>(<span class="kw">false</span>)
+  <span class="kw">const</span> [error, setError] = <span class="hook">useState</span>(<span class="kw">null</span>)
+
+  <span class="hook">useEffect</span>(() =&gt; {
+    <span class="kw">if</span> (!city) <span class="kw">return</span>
+    <span class="kw">const</span> <span class="fn">fetch</span> = <span class="kw">async</span> () =&gt; {
+      <span class="fn">setLoading</span>(<span class="kw">true</span>)
+      <span class="kw">try</span> {
+        <span class="kw">const</span> [w, f] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+          axios.<span class="fn">get</span>(`${BASE}/weather?q=${city}&appid=${API_KEY}&units=metric`),
+          axios.<span class="fn">get</span>(`${BASE}/forecast?q=${city}&appid=${API_KEY}&units=metric`)
+        ])
+        <span class="fn">setWeather</span>(w.data)
+        <span class="fn">setForecast</span>(f.data.list.<span class="fn">filter</span>((_, i) =&gt; i % <span class="num">8</span> === <span class="num">0</span>))
+      } <span class="kw">catch</span> {
+        <span class="fn">setError</span>(<span class="str">'City not found 🌧'</span>)
+      } <span class="kw">finally</span> {
+        <span class="fn">setLoading</span>(<span class="kw">false</span>)
+      }
+    }
+    <span class="fn">fetch</span>()
+  }, [city])
+
+  <span class="kw">return</span> { weather, forecast, loading, error }
+}
+
+<span class="cmt">// Usage:</span>
+<span class="kw">function</span> <span class="fn">WeatherApp</span>() {
+  <span class="kw">const</span> [city, setCity] = <span class="hook">useState</span>(<span class="str">'Delhi'</span>)
+  <span class="kw">const</span> [isCelsius, setIsCelsius] = <span class="hook">useState</span>(<span class="kw">true</span>)
+  <span class="kw">const</span> { weather, forecast, loading, error } = <span class="fn">useWeather</span>(city)
+
+  <span class="kw">const</span> <span class="fn">toF</span> = (c) =&gt; Math.<span class="fn">round</span>(c * <span class="num">9</span> / <span class="num">5</span> + <span class="num">32</span>)
+  <span class="kw">const</span> <span class="fn">temp</span> = (c) =&gt; isCelsius ? `${Math.<span class="fn">round</span>(c)}°C` : `${<span class="fn">toF</span>(c)}°F`
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">input</span> <span class="attr">onKeyDown</span>={e =&gt; e.key === <span class="str">'Enter'</span> &amp;&amp; <span class="fn">setCity</span>(e.target.value)} /&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setIsCelsius</span>(!isCelsius)}&gt;
+        {isCelsius ? <span class="str">'Switch to °F'</span> : <span class="str">'Switch to °C'</span>}
+      &lt;/<span class="tag">button</span>&gt;
+      {loading &amp;&amp; &lt;<span class="tag">p</span>&gt;🌀 Loading...&lt;/<span class="tag">p</span>&gt;}
+      {error &amp;&amp; &lt;<span class="tag">p</span>&gt;{error}&lt;/<span class="tag">p</span>&gt;}
+      {weather &amp;&amp; (
+        &lt;<span class="tag">div</span>&gt;
+          &lt;<span class="tag">h2</span>&gt;{weather.name}&lt;/<span class="tag">h2</span>&gt;
+          &lt;<span class="tag">h1</span>&gt;{<span class="fn">temp</span>(weather.main.temp)}&lt;/<span class="tag">h1</span>&gt;
+          &lt;<span class="tag">p</span>&gt;{weather.weather[<span class="num">0</span>].description}&lt;/<span class="tag">p</span>&gt;
+        &lt;/<span class="tag">div</span>&gt;
+      )}
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT 4 -->
+  <div class="project">
+    <div class="project-header">
+      <div class="project-num">04</div>
+      <div>
+        <div class="project-title">Task Management App (Kanban)</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Drag & Drop + Context + localStorage</div>
+      </div>
+      <span class="project-level level-mid">Intermediate</span>
+    </div>
+    <div class="project-body">
+      <div class="project-desc">Trello jaisi app — Todo, In Progress, Done columns. Tasks add/delete/move karna. Drag and drop. Data localStorage mein save. Companies yeh bahut pasand karte hain!</div>
+      <div class="skills-used">
+        <span class="skill-tag">useReducer</span><span class="skill-tag">Context API</span><span class="skill-tag">localStorage</span>
+        <span class="skill-tag">HTML5 DnD</span><span class="skill-tag">UUID</span>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — Kanban Board Core</span></div>
+        <pre><span class="kw">import</span> { <span class="hook">useState</span>, useReducer, createContext, useContext, <span class="hook">useEffect</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">const</span> COLUMNS = [<span class="str">'todo'</span>, <span class="str">'in-progress'</span>, <span class="str">'done'</span>]
+
+<span class="kw">function</span> <span class="fn">boardReducer</span>(state, action) {
+  <span class="kw">switch</span> (action.type) {
+    <span class="kw">case</span> <span class="str">'ADD_TASK'</span>:
+      <span class="kw">return</span> [...state, { id: Date.<span class="fn">now</span>(), ...action.payload, status: <span class="str">'todo'</span> }]
+    <span class="kw">case</span> <span class="str">'MOVE_TASK'</span>:
+      <span class="kw">return</span> state.<span class="fn">map</span>(t =&gt;
+        t.id === action.payload.id ? { ...t, status: action.payload.status } : t
+      )
+    <span class="kw">case</span> <span class="str">'DELETE_TASK'</span>:
+      <span class="kw">return</span> state.<span class="fn">filter</span>(t =&gt; t.id !== action.payload)
+    <span class="kw">default</span>: <span class="kw">return</span> state
+  }
+}
+
+<span class="kw">function</span> <span class="fn">KanbanBoard</span>() {
+  <span class="kw">const</span> [tasks, dispatch] = <span class="fn">useReducer</span>(
+    boardReducer, [],
+    () =&gt; <span class="fn">JSON</span>.<span class="fn">parse</span>(localStorage.<span class="fn">getItem</span>(<span class="str">'kanban'</span>) ?? <span class="str">'[]'</span>)
+  )
+  <span class="kw">const</span> [dragging, setDragging] = <span class="hook">useState</span>(<span class="kw">null</span>)
+
+  <span class="hook">useEffect</span>(() =&gt; {
+    localStorage.<span class="fn">setItem</span>(<span class="str">'kanban'</span>, <span class="fn">JSON</span>.<span class="fn">stringify</span>(tasks))
+  }, [tasks])
+
+  <span class="kw">const</span> <span class="fn">handleDrop</span> = (status) =&gt; {
+    <span class="kw">if</span> (!dragging) <span class="kw">return</span>
+    dispatch({ type: <span class="str">'MOVE_TASK'</span>, payload: { id: dragging, status } })
+    <span class="fn">setDragging</span>(<span class="kw">null</span>)
+  }
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span> <span class="attr">style</span>={{ display: <span class="str">'flex'</span>, gap: <span class="str">'1rem'</span> }}&gt;
+      {COLUMNS.<span class="fn">map</span>(col =&gt; (
+        &lt;<span class="tag">div</span>
+          <span class="attr">key</span>={col}
+          <span class="attr">onDragOver</span>={e =&gt; e.<span class="fn">preventDefault</span>()}
+          <span class="attr">onDrop</span>={() =&gt; <span class="fn">handleDrop</span>(col)}
+          <span class="attr">style</span>={{ flex: <span class="num">1</span>, background: <span class="str">'#f4f4f4'</span>, padding: <span class="str">'1rem'</span> }}
+        &gt;
+          &lt;<span class="tag">h3</span>&gt;{col.<span class="fn">toUpperCase</span>()}&lt;/<span class="tag">h3</span>&gt;
+          {tasks.<span class="fn">filter</span>(t =&gt; t.status === col).<span class="fn">map</span>(task =&gt; (
+            &lt;<span class="tag">div</span>
+              <span class="attr">key</span>={task.id}
+              <span class="attr">draggable</span>
+              <span class="attr">onDragStart</span>={() =&gt; <span class="fn">setDragging</span>(task.id)}
+              <span class="attr">style</span>={{ background: <span class="str">'white'</span>, padding: <span class="str">'0.5rem'</span>, marginBottom: <span class="str">'0.5rem'</span> }}
+            &gt;
+              {task.title}
+              &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() =&gt; dispatch({ type: <span class="str">'DELETE_TASK'</span>, payload: task.id })}&gt;
+                ❌
+              &lt;/<span class="tag">button</span>&gt;
+            &lt;/<span class="tag">div</span>&gt;
+          ))}
+        &lt;/<span class="tag">div</span>&gt;
+      ))}
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT 5 -->
+  <div class="project">
+    <div class="project-header">
+      <div class="project-num">05</div>
+      <div>
+        <div class="project-title">Blog Platform with Auth</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Firebase / Supabase + React Router + Auth</div>
+      </div>
+      <span class="project-level level-advanced">Advanced</span>
+    </div>
+    <div class="project-body">
+      <div class="project-desc">Full blog platform — signup/login, posts create/read/update/delete, image upload, comments. Firebase ya Supabase ke saath. Yeh project junior-to-mid level jobs ke liye perfect hai.</div>
+      <div class="skills-used">
+        <span class="skill-tag">React Router</span><span class="skill-tag">Firebase Auth</span><span class="skill-tag">Firestore</span>
+        <span class="skill-tag">Protected Routes</span><span class="skill-tag">React Query</span><span class="skill-tag">Rich Text Editor</span>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — Firebase Auth + Protected Route</span></div>
+        <pre><span class="cmt">// firebase/auth.js</span>
+<span class="kw">import</span> { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut }
+  <span class="kw">from</span> <span class="str">'firebase/auth'</span>
+
+<span class="kw">export const</span> auth = <span class="fn">getAuth</span>()
+<span class="kw">export const</span> <span class="fn">login</span> = (email, pass) =&gt; <span class="fn">signInWithEmailAndPassword</span>(auth, email, pass)
+<span class="kw">export const</span> <span class="fn">register</span> = (email, pass) =&gt; <span class="fn">createUserWithEmailAndPassword</span>(auth, email, pass)
+<span class="kw">export const</span> <span class="fn">logout</span> = () =&gt; <span class="fn">signOut</span>(auth)
+
+<span class="cmt">// hooks/useAuthState.js</span>
+<span class="kw">import</span> { <span class="hook">useState</span>, <span class="hook">useEffect</span> } <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">import</span> { onAuthStateChanged } <span class="kw">from</span> <span class="str">'firebase/auth'</span>
+
+<span class="kw">function</span> <span class="fn">useAuthState</span>() {
+  <span class="kw">const</span> [user, setUser] = <span class="hook">useState</span>(<span class="kw">undefined</span>)
+  <span class="hook">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> unsub = <span class="fn">onAuthStateChanged</span>(auth, <span class="fn">setUser</span>)
+    <span class="kw">return</span> unsub  <span class="cmt">// cleanup</span>
+  }, [])
+  <span class="kw">return</span> { user, loading: user === <span class="kw">undefined</span> }
+}
+
+<span class="cmt">// Protected Route Component</span>
+<span class="kw">function</span> <span class="fn">ProtectedRoute</span>({ children }) {
+  <span class="kw">const</span> { user, loading } = <span class="fn">useAuthState</span>()
+  <span class="kw">if</span> (loading) <span class="kw">return</span> &lt;<span class="tag">div</span>&gt;Loading...&lt;/<span class="tag">div</span>&gt;
+  <span class="kw">if</span> (!user) <span class="kw">return</span> &lt;<span class="tag">Navigate</span> <span class="attr">to</span>=<span class="val">"/login"</span> /&gt;
+  <span class="kw">return</span> children
+}
+
+<span class="cmt">// Usage:</span>
+&lt;<span class="tag">Route</span> <span class="attr">path</span>=<span class="val">"/write"</span> <span class="attr">element</span>={
+  &lt;<span class="tag">ProtectedRoute</span>&gt;&lt;<span class="tag">WritePost</span> /&gt;&lt;/<span class="tag">ProtectedRoute</span>&gt;
+} /&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT 6 -->
+  <div class="project">
+    <div class="project-header">
+      <div class="project-num">06</div>
+      <div>
+        <div class="project-title">Dashboard with Charts & Data</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Recharts + React Query + Filters + Export</div>
+      </div>
+      <span class="project-level level-advanced">Advanced</span>
+    </div>
+    <div class="project-body">
+      <div class="project-desc">Admin dashboard — sales charts, user analytics, data tables with search/sort/filter/pagination, CSV export. React Query se data fetching. Companies ismein bahut interested rehti hain.</div>
+      <div class="skills-used">
+        <span class="skill-tag">React Query</span><span class="skill-tag">Recharts</span><span class="skill-tag">Pagination</span>
+        <span class="skill-tag">CSV Export</span><span class="skill-tag">Debounced Search</span><span class="skill-tag">useMemo</span>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">JSX — React Query + Recharts</span></div>
+        <pre><span class="cmt"># Install</span>
+npm install @tanstack/react-query recharts
+
+<span class="kw">import</span> { useQuery } <span class="kw">from</span> <span class="str">'@tanstack/react-query'</span>
+<span class="kw">import</span> { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } <span class="kw">from</span> <span class="str">'recharts'</span>
+<span class="kw">import</span> { <span class="hook">useMemo</span>, <span class="hook">useState</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">function</span> <span class="fn">SalesDashboard</span>() {
+  <span class="kw">const</span> [period, setPeriod] = <span class="hook">useState</span>(<span class="str">'7d'</span>)
+  <span class="kw">const</span> [search, setSearch] = <span class="hook">useState</span>(<span class="str">''</span>)
+
+  <span class="cmt">// React Query: auto cache, refetch, error handling</span>
+  <span class="kw">const</span> { data, isLoading } = <span class="fn">useQuery</span>({
+    queryKey: [<span class="str">'sales'</span>, period],
+    queryFn: () =&gt; <span class="fn">fetch</span>(`/api/sales?period=${period}`).<span class="fn">then</span>(r =&gt; r.<span class="fn">json</span>()),
+    staleTime: <span class="num">5</span> * <span class="num">60</span> * <span class="num">1000</span>,  <span class="cmt">// 5 min cache</span>
+  })
+
+  <span class="kw">const</span> filtered = <span class="hook">useMemo</span>(() =&gt;
+    data?.orders.<span class="fn">filter</span>(o =&gt; o.customer.<span class="fn">includes</span>(search)) ?? [],
+    [data, search]
+  )
+
+  <span class="kw">const</span> <span class="fn">exportCSV</span> = () =&gt; {
+    <span class="kw">const</span> csv = [<span class="str">'Date,Amount,Customer'</span>,
+      ...filtered.<span class="fn">map</span>(o =&gt; `${o.date},${o.amount},${o.customer}`)
+    ].<span class="fn">join</span>(<span class="str">'\n'</span>)
+    <span class="kw">const</span> blob = <span class="kw">new</span> <span class="fn">Blob</span>([csv], { type: <span class="str">'text/csv'</span> })
+    <span class="kw">const</span> url = URL.<span class="fn">createObjectURL</span>(blob)
+    <span class="kw">const</span> a = document.<span class="fn">createElement</span>(<span class="str">'a'</span>)
+    a.href = url; a.download = <span class="str">'sales.csv'</span>; a.<span class="fn">click</span>()
+  }
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      <span class="cmt">{/* Period Filter */}</span>
+      {[<span class="str">'7d'</span>, <span class="str">'30d'</span>, <span class="str">'90d'</span>].<span class="fn">map</span>(p =&gt; (
+        &lt;<span class="tag">button</span> <span class="attr">key</span>={p} <span class="attr">onClick</span>={() =&gt; <span class="fn">setPeriod</span>(p)} <span class="attr">style</span>={{
+          fontWeight: period === p ? <span class="str">'bold'</span> : <span class="str">'normal'</span>
+        }}&gt;{p}&lt;/<span class="tag">button</span>&gt;
+      ))}
+
+      <span class="cmt">{/* Chart */}</span>
+      &lt;<span class="tag">ResponsiveContainer</span> <span class="attr">width</span>=<span class="val">"100%"</span> <span class="attr">height</span>={<span class="num">300</span>}&gt;
+        &lt;<span class="tag">LineChart</span> <span class="attr">data</span>={data?.chartData}&gt;
+          &lt;<span class="tag">XAxis</span> <span class="attr">dataKey</span>=<span class="val">"date"</span> /&gt;
+          &lt;<span class="tag">YAxis</span> /&gt;
+          &lt;<span class="tag">Tooltip</span> /&gt;
+          &lt;<span class="tag">Line</span> <span class="attr">type</span>=<span class="val">"monotone"</span> <span class="attr">dataKey</span>=<span class="val">"sales"</span> <span class="attr">stroke</span>=<span class="val">"#61dafb"</span> /&gt;
+        &lt;/<span class="tag">LineChart</span>&gt;
+      &lt;/<span class="tag">ResponsiveContainer</span>&gt;
+
+      <span class="cmt">{/* Search + Export */}</span>
+      &lt;<span class="tag">input</span> <span class="attr">placeholder</span>=<span class="val">"Search customer..."</span> <span class="attr">onChange</span>={e =&gt; <span class="fn">setSearch</span>(e.target.value)} /&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={exportCSV}&gt;Export CSV&lt;/<span class="tag">button</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     INTERVIEW PREP
+══════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="chapter" id="interview">
+  <span class="chapter-num">Interview Preparation</span>
+  <h2>Top React Interview Questions</h2>
+
+  <table>
+    <tr><th>#</th><th>Question</th><th>Short Answer</th></tr>
+    <tr><td>1</td><td>Virtual DOM kya hai?</td><td>React ka in-memory representation of real DOM. Changes compare (diffing) karke sirf minimum updates karta hai.</td></tr>
+    <tr><td>2</td><td>useState vs useRef?</td><td>useState change pe re-render karta hai. useRef nahi — value yaad rakhne ya DOM access ke liye.</td></tr>
+    <tr><td>3</td><td>useMemo vs useCallback?</td><td>useMemo: value cache karta hai. useCallback: function cache karta hai.</td></tr>
+    <tr><td>4</td><td>Props drilling kya hai?</td><td>Data ko har level pe props se paas karna — Context ya Zustand se solve karo.</td></tr>
+    <tr><td>5</td><td>Controlled vs Uncontrolled?</td><td>Controlled: React state se form manage. Uncontrolled: useRef se DOM directly access.</td></tr>
+    <tr><td>6</td><td>Key prop kyun zaruri hai?</td><td>React ko list items identify karne mein help karta hai — efficient re-render ke liye.</td></tr>
+    <tr><td>7</td><td>React.memo kya karta hai?</td><td>Component ko memoize karta hai — sirf tab re-render karta hai jab props change hon.</td></tr>
+    <tr><td>8</td><td>useEffect cleanup kab chahiye?</td><td>Timers, event listeners, subscriptions — memory leaks rokne ke liye cleanup zaruri hai.</td></tr>
+    <tr><td>9</td><td>React 19 ke new features?</td><td>use() hook, useActionState, useOptimistic, Server Components stable, React Compiler.</td></tr>
+    <tr><td>10</td><td>Reconciliation kya hai?</td><td>React ka algorithm jo purana aur naya Virtual DOM compare karta hai aur sirf changes apply karta hai.</td></tr>
+  </table>
+
+  <div class="section">
+    <h3><span class="dot"></span>Recommended Learning Path</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot-r dr"></div><div class="dot-r dy"></div><div class="dot-r dg"></div></div><span class="code-lang">LEARNING ROADMAP</span></div>
+      <pre>Week 1-2:   JSX, Components, Props, useState, useEffect
+Week 3:     Events, Forms, Conditional Rendering, Lists
+Week 4:     useContext, useRef, useMemo, Custom Hooks
+Week 5:     React Router v6, Error Boundaries, Lazy Loading
+Week 6:     React 19 Features (use, useActionState, useOptimistic)
+Week 7:     Project 1 + Project 2 banao (GitHub Finder + Cart)
+Week 8:     Project 3 + Project 4 (Weather + Kanban)
+Week 9:     Firebase/Supabase + Project 5 (Blog)
+Week 10:    React Query + Project 6 (Dashboard)
+Week 11-12: Next.js basics, Portfolio banana, Apply karo! 🎯
+
+Parallel tools: Git/GitHub, Tailwind CSS, VS Code, Chrome DevTools</pre>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>💡 RESUME TIP</strong><br>
+    Sirf woh projects resume pe daalo jinhe aapne GitHub pe push kiya ho aur jinka live demo ho (Vercel/Netlify free hai). Recruiter code zaroor dekhte hain!
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<footer>
+  <span>⚛ React 19 Complete Notes</span> &nbsp;·&nbsp;
+  <span>Basics to Advanced</span> &nbsp;·&nbsp;
+  <span>Job Oriented</span> &nbsp;·&nbsp;
+  <span style="color:var(--react)">Happy Coding! 🚀</span>
+</footer>
+
+</div><!-- /main -->
+</body>
+</html>
